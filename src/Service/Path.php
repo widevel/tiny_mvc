@@ -17,9 +17,6 @@ class Path {
 		$this->base = realpath(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..') . DIRECTORY_SEPARATOR;
 		$this->template = $this->base . 'template' . DIRECTORY_SEPARATOR;
 		$this->logs = $this->base . 'logs' . DIRECTORY_SEPARATOR;
-		
-		log_d(sprintf('[Service Path] template: %s', $this->template));
-		log_d(sprintf('[Service Path] logs: %s', $this->logs));
 	}
 	
 	
