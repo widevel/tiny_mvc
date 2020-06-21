@@ -8,6 +8,8 @@
  * @author     Marco iosif Constantinescu <marco.isfc@gmail.com>
 */
 
+if(!defined('CLI_CONSOLE')) define('CLI_CONSOLE', 0);
+
 function onShutDown() {
 	$last_error = error_get_last();
 	if($last_error['type'] === E_ERROR || $last_error['type'] === E_USER_ERROR) {

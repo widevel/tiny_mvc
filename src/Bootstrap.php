@@ -11,19 +11,18 @@ use TinyMvc\Service\Response;
 use TinyMvc\Service\ResponseJson;
 use TinyMvc\Service\Path;
 use TinyMvc\Service\Log;
+use TinyMvc\Service\Config;
 use TinyMvc\Service\Url;
 use TinyMvc\Service\Page;
+use TinyMvc\Service\Console;
 use TinyMvc\Service\Request;
 
 class TinyMvcBootstrap {
 	
 	const SERVICE_CLASS = [
-		'response' => Response::class,
-		'response_json' => ResponseJson::class,
 		'path' => Path::class,
 		'log' => Log::class,
-		'url' => Url::class,
-		'request' => Request::class,
+		'config' => Config::class,
 	];
 	
 	private $service_instance = [];
@@ -31,6 +30,13 @@ class TinyMvcBootstrap {
 	public function load_services() {
 		
 		$services_arr = self::SERVICE_CLASS;
+		
+		if(!CLI_CONSOLE) {
+			$services_arr['response'] = Response::class;
+			$services_arr['response_json'] = ResponseJson::class;
+			$services_arr['url'] = Url::class;
+			$services_arr['request'] = Request::class;
+		}
 		
 		$services_yaml_file = realpath(__DIR__ . '/../../../config/services.yaml');
 		if($services_yaml_file !== false) {
@@ -42,7 +48,8 @@ class TinyMvcBootstrap {
 			}
 		}
 		
-		$services_arr['page'] = Page::class;
+		if(!CLI_CONSOLE) $services_arr['page'] = Page::class;
+		if(CLI_CONSOLE) $services_arr['console'] = Console::class;
 		
 		foreach($services_arr as $service_name => $class_name) {
 			if(!class_exists($class_name)) throw new \Exception(sprintf('Unable to load service %s class %s not exists', $service_name, $class_name));

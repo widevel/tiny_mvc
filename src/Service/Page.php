@@ -22,7 +22,7 @@ class Page {
 		if($page === null) $page = 'home';
 		if($action === null) $action = 'index';
 		
-		log_d(sprintf('[Service Page] Request: %s/%s', $page, $action));
+		log_d(sprintf('Request: %s/%s', $page, $action), 'ServicePage');
 		
 		$page = strtolower($page);
 		self::$page_name = $page;
@@ -35,7 +35,7 @@ class Page {
 		$className = sprintf('\%s\Page\\%s', BUNDLE_NAME, $page);
 		
 		if(!class_exists($className)) {
-			log_d(sprintf('[Service Page] 404: Class %s not exists', $className));
+			log_d(sprintf('404: Class %s not exists', $className), 'ServicePage');
 			$response_service->setCode(404);
 			return;
 		}
@@ -43,7 +43,7 @@ class Page {
 		$instance = new $className;
 		
 		if(!method_exists($instance, $action)) {
-			log_d(sprintf('[Service Page] 404: Method %s:%s not exists', $className, $action));
+			log_d(sprintf('404: Method %s:%s not exists', $className, $action), 'ServicePage');
 			$response_service->setCode(404);
 			return;
 		}
@@ -56,11 +56,11 @@ class Page {
 			\TinyMvc\Service\Template::class
 		];
 		if($return !== null) {
-			log_d(sprintf('[Service Page] Page return: %s', get_class($return)));
+			log_d(sprintf('Page return: %s', get_class($return)), 'ServicePage');
 			if(!(is_object($return) && in_array(get_class($return), $return_classes))) throw new \Exception(sprintf('Page %s->%s() has be invalid return', $className, $action));
 		
 			$response_service->mergeData($return);
-		} else log_d('[Service Page] Page return: null');
+		} else log_d('Page return: null', 'ServicePage');
 		
 		
 	}
