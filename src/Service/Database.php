@@ -11,29 +11,41 @@ namespace TinyMvc\Service;
 
 class Database {
 	
-	const HOSTNAME = 'localhost';
-	const PORT = 3306;
-	const USER = 'root';
-	const PASS = '12345';
-	const DB = 'xyz';
-	
-	const MODELS = [
-		'code' => \App\Model\Code::class,
-		'code_email' => \App\Model\CodeEmail::class,
-		'file' => \App\Model\File::class,
-		'server' => \App\Model\Server::class,
-	];
+	const DEFAULT_PORT = 3306;
 	
 	public $link, $lastQuery;
 	
-	public $modelsInstances = [];
+	public $modelsInstances = [], $models = [];
+	
+	public function __construct() {
+		$database_models_config = service('config')->get('database_models');
+		
+		if(!is_array($database_models_config)) throw new \Exception('unable to load database_models.yaml config');
+		
+		$this->models = $database_models_config;
+		
+		$database_config = service('config')->get('database');
+		
+		if(!is_array($database_config)) throw new \Exception('unable to load database.yaml config');
+		
+		$this->hostname = array_key_exists('hostname', $database_config) ? $database_config['hostname'] : null;
+		$this->port = array_key_exists('port', $database_config) ? $database_config['port'] : self::DEFAULT_PORT;
+		$this->user = array_key_exists('user', $database_config) ? $database_config['user'] : null;
+		$this->pass = array_key_exists('pass', $database_config) ? $database_config['pass'] : null;
+		$this->db = array_key_exists('db', $database_config) ? $database_config['db'] : null;
+		
+		if(!$this->hostname) throw new \Exception('hostname var is missing in config file');
+		if(!$this->user) throw new \Exception('user var is missing in config file');
+		if(!$this->pass) throw new \Exception('pass var is missing in config file');
+		if(!$this->db) throw new \Exception('db var is missing in config file');
+	}
 	
 	public function getModel($name) {
 		if($this->link === null) $this->connect();
 		if(array_key_exists($name, $this->modelsInstances)) return $this->modelsInstances[$name];
-		if(!array_key_exists($name, self::MODELS)) throw new \Exception(sprintf('model %s not exists in MODELS constant', $name));
+		if(!array_key_exists($name, $this->models)) throw new \Exception(sprintf('model %s not defined', $name));
 		
-		$modelClassName = self::MODELS[$name];
+		$modelClassName = $this->models[$name];
 		
 		$this->modelsInstances[$name] = new $modelClassName($this);
 		
@@ -42,8 +54,8 @@ class Database {
 	
 	public function connect() {
 		if(is_object($this->link)) return;
-		log_d(sprintf('Connecting to mysql: HOSTNAME %s USER %s DB %s PORT %d', self::HOSTNAME, self::USER, self::DB, self::PORT), 'Database');
-		$link = new \mysqli(self::HOSTNAME, self::USER, self::PASS, self::DB, self::PORT);
+		log_d(sprintf('Connecting to mysql: HOSTNAME %s USER %s DB %s PORT %d', $this->hostname, $this->user, $this->db, $this->port), 'Database');
+		$link = new \mysqli($this->hostname, $this->user, $this->pass, $this->db, $this->port);
 		$link->set_charset("utf8mb4");
 		
 		if ($link->connect_errno) {

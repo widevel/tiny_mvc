@@ -17,6 +17,7 @@ class Path {
 		$this->base = realpath(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..') . DIRECTORY_SEPARATOR;
 		$this->template = $this->base . 'template' . DIRECTORY_SEPARATOR;
 		$this->logs = $this->base . 'logs' . DIRECTORY_SEPARATOR;
+		$this->config = $this->base . 'config' . DIRECTORY_SEPARATOR;
 	}
 	
 	
