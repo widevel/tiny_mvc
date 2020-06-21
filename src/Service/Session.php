@@ -1,0 +1,18 @@
+<?php
+/**
+ * PHP version 7.X
+ *
+ * LICENSE: GNU AGPLv3
+ *
+ * @author     Marco iosif Constantinescu <marco.isfc@gmail.com>
+ */
+namespace TinyMvc\Service;
+
+class Session {
+	
+	const COOKIE_LIFETIME = 3600 * 24 * 7;
+	
+	public function __construct() {
+		session_start(['cookie_lifetime' => SELF::COOKIE_LIFETIME]);
+	}
+}
