@@ -1,11 +1,12 @@
 <?php
 /**
  * PHP version 7.X
- *
+ * PACKAGE: TinyMvc
+ * VERSION: 0.1
  * LICENSE: GNU AGPLv3
  *
  * @author     Marco iosif Constantinescu <marco.isfc@gmail.com>
- */
+*/
 namespace TinyMvc\Service;
 
 class Database {
@@ -41,19 +42,22 @@ class Database {
 	
 	public function connect() {
 		if(is_object($this->link)) return;
+		log_d(sprintf('[Service Database] Connecting to mysql: HOSTNAME %s USER %s DB %s PORT %d', self::HOSTNAME, self::USER, self::DB, self::PORT));
 		$link = new \mysqli(self::HOSTNAME, self::USER, self::PASS, self::DB, self::PORT);
 		$link->set_charset("utf8mb4");
 		
 		if ($link->connect_errno) {
 			throw new Exception('Connection failed ' . $link->connect_error);
 		}
-				
+		
 		$this->link = $link;
 	}
 	
 	public function selectRows(string $query, array $binds = []) {
 		$this->lastQuery = null;
+		log_d(sprintf('[Service Database] Query: %s Binds: %s', $query, json_encode($binds)));
 		$query = $this->bindsQuery($query, $binds);
+		log_d(sprintf('[Service Database] Runnable Query: %s', $query));
 		$this->lastQuery = $query;
 		$rows = [];
 		if ($result = $this->link->query($query)) {
@@ -68,32 +72,36 @@ class Database {
 		}
 
 		if($this->link->error) throw new \Exception($query . ' - ' . $this->link->error);
-		
+		log_d(sprintf('[Service Database] Rows results: %d', count($rows)));
 		return $rows;
 	}
 	
-	public function selectOneRow(string $query, array $binds = [], $return_col = null) {
+	public function selectOneRow(string $query, array $binds = []) {
 		$this->lastQuery = null;
+		log_d(sprintf('[Service Database] Query: %s Binds: %s', $query, json_encode($binds)));
 		$query = $this->bindsQuery($query, $binds);
+		log_d(sprintf('[Service Database] Runnable Query: %s', $query));
 		$this->lastQuery = $query;
 		if ($result = $this->link->query($query)) {
 			if($result->num_rows > 0) {
 				$obj = $result->fetch_object();
+				log_d(sprintf('Response: %s', json_encode($obj)));
 				$result->close();
-				if($return_col !== null) return (property_exists($obj, $return_col)) ? $obj->{$return_col} : null;
 				return $obj;
 			}
 			
 		}
 
 		if($this->link->error) throw new \Exception($query . ' - ' . $this->link->error);
-		
+		log_d('[Service Database] Response: null');
 		return null;
 	}
 	
 	public function simpleQuery(string $query, array $binds = []) {
 		$this->lastQuery = null;
+		log_d(sprintf('[Service Database] Query: %s Binds: %s', $query, json_encode($binds)));
 		$query = $this->bindsQuery($query, $binds);
+		log_d(sprintf('[Service Database] Runnable Query: %s', $query));
 		$this->lastQuery = $query;
 		$this->link->query($query);
 		if($this->link->error) throw new \Exception($query . ' - ' . $this->link->error);
@@ -105,6 +113,7 @@ class Database {
 		$fields = implode('`,`', array_keys($data));
 		$values_part = implode(',', array_fill(0,count($data), '?'));
 		$sql = sprintf("INSERT%s INTO `%s` (`%s`) VALUES (%s)", ($ignore ? ' IGNORE' : ''), $table, $fields, $values_part);
+		log_d(sprintf('[Service Database] INSERT SQL: %s', $sql));
 		$stmt = $this->link->prepare($sql);
 		if($stmt === false) throw new \Exception($sql . ' - ' . $this->link->error);
 		$bind_mask = '';

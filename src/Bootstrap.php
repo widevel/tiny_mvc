@@ -1,11 +1,12 @@
 <?php
 /**
  * PHP version 7.X
- *
+ * PACKAGE: TinyMvc
+ * VERSION: 0.1
  * LICENSE: GNU AGPLv3
  *
  * @author     Marco iosif Constantinescu <marco.isfc@gmail.com>
- */
+*/
 use TinyMvc\Service\Response;
 use TinyMvc\Service\ResponseJson;
 use TinyMvc\Service\Path;
@@ -72,7 +73,7 @@ function service_load(string $service_name, string $class_name) {
 
 function service_exists(string $service_name) :bool {
 	global $bootstrap_class;
-	return $bootstrap_class->service_exists($service_name);
+	return (is_object($bootstrap_class)) ? $bootstrap_class->service_exists($service_name) : false;
 }
 
 function service(string $service_name) :object {

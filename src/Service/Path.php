@@ -1,11 +1,12 @@
 <?php
 /**
  * PHP version 7.X
- *
+ * PACKAGE: TinyMvc
+ * VERSION: 0.1
  * LICENSE: GNU AGPLv3
  *
  * @author     Marco iosif Constantinescu <marco.isfc@gmail.com>
- */
+*/
 namespace TinyMvc\Service;
 
 class Path {
@@ -16,6 +17,9 @@ class Path {
 		$this->base = realpath(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..') . DIRECTORY_SEPARATOR;
 		$this->template = $this->base . 'template' . DIRECTORY_SEPARATOR;
 		$this->logs = $this->base . 'logs' . DIRECTORY_SEPARATOR;
+		
+		log_d(sprintf('[Service Path] template: %s', $this->template));
+		log_d(sprintf('[Service Path] logs: %s', $this->logs));
 	}
 	
 	

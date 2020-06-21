@@ -1,11 +1,12 @@
 <?php
 /**
  * PHP version 7.X
- *
+ * PACKAGE: TinyMvc
+ * VERSION: 0.1
  * LICENSE: GNU AGPLv3
  *
  * @author     Marco iosif Constantinescu <marco.isfc@gmail.com>
- */
+*/
 
 function log_generate_line(string $line_format, string $date_format, string $unique, int $level, $message, int $time, float $microtime) :string {
 	return sprintf(
@@ -75,3 +76,8 @@ function log_format_message($message) :string {
 			break;
 	}
 }
+
+
+function log_d() { return call_user_func_array([service('log'), 'debug'], func_get_args()); }
+function log_w() { return call_user_func_array([service('log'), 'warning'], func_get_args()); }
+function log_e() { return call_user_func_array([service('log'), 'error'], func_get_args()); }
