@@ -13,6 +13,7 @@ if(!defined('CLI_CONSOLE')) define('CLI_CONSOLE', 0);
 function onShutDown() {
 	$last_error = error_get_last();
 	if($last_error['type'] === E_ERROR || $last_error['type'] === E_USER_ERROR) {
+		http_response_code(500);
 		if(function_exists('service_exists') && service_exists('log')) {
 			service('log')->error(sprintf("%s\nLine %d File %s", $last_error['message'], (int) $last_error['line'], $last_error['file']), 'error');
 		}
