@@ -50,3 +50,7 @@ function fillStrLeft(string $str, int $min_length, string $fill) {
 function posOrZero(int $n) {
 	return $n < 0 ? 0 : $n;
 }
+
+function prevent_xss($str) {
+	return strip_tags(htmlentities($str, ENT_QUOTES));
+}
