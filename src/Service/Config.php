@@ -13,16 +13,22 @@ class Config {
 	
 	public $list = [];
 	
-	public function get($name) :array {
+	public function get($name, $required = true) {
 		
 		if(array_key_exists($name, $this->list)) return $this->list[$name];
 
 		$path = service('path')->config . $name . '.yaml';
-		if(!is_file($path)) throw new \Exception(sprintf('Unable to load config file %s', $path));
+		if(!is_file($path)) {
+			if($required) throw new \Exception(sprintf('Unable to load config file %s', $path));
+			return null;
+		}
 		
 		$data = yaml_parse_file($path);
 		
-		if(!is_array($data)) throw new \Exception(sprintf('Unable to parse yaml file %s', $path));
+		if(!is_array($data)) {
+			if($required) throw new \Exception(sprintf('Unable to parse yaml file %s', $path));
+			return null;
+		}
 		
 		$this->list[$name] = $data;
 		

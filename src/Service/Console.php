@@ -13,6 +13,7 @@ class Console {
 	
 	
 	public function __construct() {
+		global $argv;
 		$className = sprintf('\%s\Console\\%s', BUNDLE_NAME, CLASS_CONSOLE);
 		
 		if(!class_exists($className)) {
@@ -20,6 +21,13 @@ class Console {
 			return;
 		}
 		
-		new $className;
+		$arguments = $argv;
+		
+		unset($arguments[0], $arguments[1]);
+		
+		$arguments = array_values($arguments);
+		
+		$reflector = new \ReflectionClass($className);
+		$reflector->newInstanceArgs($arguments);
 	}
 }

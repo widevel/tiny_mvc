@@ -56,6 +56,7 @@ class Response {
 		log_d('Merging from ResponseJson', 'ServiceResponse');
 		$this->setHeader('Content-Type', 'application/json');
 		$this->body = json_encode($class->getAllData());
+		log_d(sprintf('JSON: %s', $this->body), 'ServiceResponse');
 	}
 	
 	public function mergeFromTemplate(\TinyMvc\Service\Template $class) {

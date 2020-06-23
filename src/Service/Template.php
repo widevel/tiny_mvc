@@ -14,14 +14,18 @@ class Template {
 	public $html;
 	public function render(string $view = null, array $data = [], bool $return = false) {
 		if($view === null) $view = Page::$page_name . DIRECTORY_SEPARATOR . Page::$action_name . '.html';
-		$view_path = service('path')->template . implode(DIRECTORY_SEPARATOR, self::parseViewName($view));
-		if(!is_file($view_path)) throw new \Exception(sprintf('View %s not exists', $view_path));
+		$view_path = $this->getViewPath($view);
+		if($view_path === false) throw new \Exception(sprintf('View %s not exists', $view_path));
 		$html = self::renderHtml($view_path, $data);
 		if($return === true) return $html;
 		
 		$this->html = $html;
 		
 		return $this;
+	}
+	
+	public function getViewPath(string $view) {
+		return realpath(service('path')->template . implode(DIRECTORY_SEPARATOR, self::parseViewName($view)));
 	}
 	
 	private static function renderHtml() {
