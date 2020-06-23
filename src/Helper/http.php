@@ -20,6 +20,8 @@ function background_http_request($url, array $post = []) {
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);   
     }
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1); 
+	curl_setopt($ch, CURLOPT_TIMEOUT, 1);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
     curl_exec($ch);
