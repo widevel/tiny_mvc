@@ -47,9 +47,13 @@ class Response {
 	
 	public function __destruct() {
 		if($this->body !== null) echo $this->body;
+		if(defined('HTTP_RESPONSE_CODE_SETTED')) $this->code = HTTP_RESPONSE_CODE_SETTED;
 		log_d(sprintf('HTTP code: %d', $this->code), 'ServiceResponse');
-		http_response_code($this->code);
-		$this->sendHeaders();
+		if(!headers_sent()) {
+			http_response_code($this->code);
+			$this->sendHeaders();
+		} else log_d('Headers already sended, cannot send again', 'ServiceResponse');
+		
 	}
 	
 	public function mergeFromResponseJson(\TinyMvc\Service\ResponseJson $class) {
