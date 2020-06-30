@@ -15,6 +15,7 @@ function call_console_cmd(string $name, $arguments = [], bool $background = true
 	$cmd .= ' ' . service('path')->php . 'console.php ' . escapeshellarg($name);
 	foreach($arguments as $argument) $cmd .= ' ' . escapeshellarg($argument);
 	if($background) $cmd .= cmd_get_background_str();
+	log_d('cmd:' . $cmd, 'HelperCmd');
 	return shell_exec($cmd);
 }
 
