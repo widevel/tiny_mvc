@@ -12,6 +12,7 @@ if(!defined('CLI_CONSOLE')) define('CLI_CONSOLE', 0);
 
 function onShutDown() {
 	$last_error = error_get_last();
+	if(!is_array($last_error)) return;
 	if($last_error['type'] === E_ERROR || $last_error['type'] === E_USER_ERROR) {
 		AppErrorHandler($last_error['type'], $last_error['message'], $last_error['file'], $last_error['line']);
 	}
