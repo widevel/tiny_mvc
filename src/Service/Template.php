@@ -13,14 +13,19 @@ use TinyMvc\Service\Page;
 class Template {
 	public $html;
 	public function render(string $view = null, array $data = [], bool $return = false) {
-		if($view === null) $view = Page::$page_name . DIRECTORY_SEPARATOR . Page::$action_name . '.html';
+		if($view === null && service_exists('route')) {
+			$current_route = service('route')->getCurrent();
+			if($current_route === null) throw new \Exception('Current router is undefined.');
+			$view = $current_route->getView();
+			if($view === null) throw new \Exception('View not specified in render() and route view is undefined.');
+		} else if($view === null) $view = Page::$page_name . DIRECTORY_SEPARATOR . Page::$action_name . '.phtml';
 		$view_path = $this->getViewPath($view);
-		if($view_path === false) throw new \Exception(sprintf('View %s not exists', $view_path));
+		if($view_path === false) throw new \Exception(sprintf('View %s not exists', $view));
 		$html = self::renderHtml($view_path, $data);
 		if($return === true) return $html;
 		
 		$this->html = $html;
-		
+
 		return $this;
 	}
 	

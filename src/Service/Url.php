@@ -14,7 +14,7 @@ class Url {
 	public function __construct() {
 		$this->base_path = $this->getBasePath();
 		$this->base_url = $this->getBaseUrl();
-		$this->segments = array_key_exists('path', $_GET) ? array_values(array_filter(explode('/', $_GET['path']))) : [];
+		$this->segments = array_key_exists('path', $_GET) ? array_values(explode('/', $_GET['path'])) : [];
 		$this->arguments = $this->segments;
 		if(count($this->arguments) > 0) {
 			if(count($this->arguments) == 1) unset($this->arguments[0]);
@@ -45,7 +45,9 @@ class Url {
 	}
 	
 	public function getUrl($uri) {
-		return $this->getBaseUrl() . $uri;
+		$url = $this->getBaseUrl() . $uri;
+		$url = preg_replace('/([^:])(\/{2,})/', '$1/', $url);
+		return $url;
 	}
 	
 	private function getBasePath() {

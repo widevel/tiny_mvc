@@ -54,7 +54,7 @@ class Database {
 	
 	public function connect() {
 		if(is_object($this->link)) return;
-		log_d(sprintf('Connecting to mysql: HOSTNAME %s USER %s DB %s PORT %d', $this->hostname, $this->user, $this->db, $this->port), 'Database');
+		log_d(sprintf('Connecting to mysql: HOSTNAME %s USER %s DB %s PORT %d', $this->hostname, $this->user, $this->db, $this->port), 'TinyMvcDatabase');
 		$link = new \mysqli($this->hostname, $this->user, $this->pass, $this->db, $this->port);
 		$link->set_charset("utf8mb4");
 		
@@ -67,9 +67,9 @@ class Database {
 	
 	public function selectRows(string $query, array $binds = []) {
 		$this->lastQuery = null;
-		log_d(sprintf('Query: %s Binds: %s', $query, json_encode($binds)), 'Database');
+		log_d(sprintf('Query: %s Binds: %s', $query, json_encode($binds)), 'TinyMvcDatabase');
 		$query = $this->bindsQuery($query, $binds);
-		log_d(sprintf('Runnable Query: %s', $query), 'Database');
+		log_d(sprintf('Runnable Query: %s', $query), 'TinyMvcDatabase');
 		$this->lastQuery = $query;
 		$rows = [];
 		if ($result = $this->link->query($query)) {
@@ -84,20 +84,20 @@ class Database {
 		}
 
 		if($this->link->error) throw new \Exception($query . ' - ' . $this->link->error);
-		log_d(sprintf('Rows results: %d', count($rows)), 'Database');
+		log_d(sprintf('Rows results: %d', count($rows)), 'TinyMvcDatabase');
 		return $rows;
 	}
 	
 	public function selectOneRow(string $query, array $binds = []) {
 		$this->lastQuery = null;
-		log_d(sprintf('Query: %s Binds: %s', $query, json_encode($binds)), 'Database');
+		log_d(sprintf('Query: %s Binds: %s', $query, json_encode($binds)), 'TinyMvcDatabase');
 		$query = $this->bindsQuery($query, $binds);
-		log_d(sprintf('Runnable Query: %s', $query), 'Database');
+		log_d(sprintf('Runnable Query: %s', $query), 'TinyMvcDatabase');
 		$this->lastQuery = $query;
 		if ($result = $this->link->query($query)) {
 			if($result->num_rows > 0) {
 				$obj = $result->fetch_object();
-				log_d(sprintf('Response: %s', json_encode($obj)), 'Database');
+				log_d(sprintf('Response: %s', json_encode($obj)), 'TinyMvcDatabase');
 				$result->close();
 				return $obj;
 			}
@@ -105,15 +105,15 @@ class Database {
 		}
 
 		if($this->link->error) throw new \Exception($query . ' - ' . $this->link->error);
-		log_d('Response: null', 'Database');
+		log_d('Response: null', 'TinyMvcDatabase');
 		return null;
 	}
 	
 	public function simpleQuery(string $query, array $binds = []) {
 		$this->lastQuery = null;
-		log_d(sprintf('Query: %s Binds: %s', $query, json_encode($binds)), 'Database');
+		log_d(sprintf('Query: %s Binds: %s', $query, json_encode($binds)), 'TinyMvcDatabase');
 		$query = $this->bindsQuery($query, $binds);
-		log_d(sprintf('Runnable Query: %s', $query), 'Database');
+		log_d(sprintf('Runnable Query: %s', $query), 'TinyMvcDatabase');
 		$this->lastQuery = $query;
 		$this->link->query($query);
 		if($this->link->error) throw new \Exception($query . ' - ' . $this->link->error);
@@ -125,16 +125,18 @@ class Database {
 		$fields = implode('`,`', array_keys($data));
 		$values_part = implode(',', array_fill(0,count($data), '?'));
 		$sql = sprintf("INSERT%s INTO `%s` (`%s`) VALUES (%s)", ($ignore ? ' IGNORE' : ''), $table, $fields, $values_part);
-		log_d(sprintf('INSERT SQL: %s', $sql), 'Database');
+		log_d(sprintf('INSERT SQL: %s', $sql), 'TinyMvcDatabase');
 		$stmt = $this->link->prepare($sql);
 		if($stmt === false) throw new \Exception($sql . ' - ' . $this->link->error);
 		$bind_mask = '';
 		foreach($data as $value) {
 			if(is_int($value)) $bind_mask .= 'i';
 			if(is_double($value)) $bind_mask .= 'd';
+			if(is_bool($value)) $bind_mask .= 'd';
 			if(is_string($value)) $bind_mask .= 's';
 			if(is_null($value)) $bind_mask .= 's';
 		}
+		
 		$stmt = call_user_func_array([$this, 'bind_param_bridge'], array_merge([$stmt, $bind_mask], array_values($data)));
 		$stmt_executed = (!$stmt->execute()) ? false : true;
 		if($stmt->error || $stmt_executed === false) throw new \Exception($stmt->error);
@@ -164,11 +166,14 @@ class Database {
 	
 	public function escapeBinds($v) {
 		if(is_int($v)) return $v;
+		if(is_double($v)) return $v;
+		if(is_float($v)) return $v;
 		if(is_string($v)) return "'" . $this->link->real_escape_string($v) . "'";
+		if(is_null($v)) return 'null';
 		throw new \Exception('%s type is not allowed in escapeBinds func', gettype($v));
 	}
 	
 	public function getLastQuery() {
-		return $this->$lastQuery;
+		return $this->lastQuery;
 	}
 }

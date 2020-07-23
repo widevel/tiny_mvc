@@ -7,8 +7,9 @@
  *
  * @author     Marco iosif Constantinescu <marco.isfc@gmail.com>
 */
-function getAsset($file) :string {
+function getAsset(string $file, array $params = []) :string {
 	$file = ltrim($file, '/');
 	$path = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . service('url')->base_path . $file;
-	return service('url')->base_url . ($file . '?' . filemtime($path));
+	if(is_file($path)) $params['t'] = filemtime($path);
+	return add_params_url(service('url')->base_url . $file, $params);
 }

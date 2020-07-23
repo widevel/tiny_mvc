@@ -35,36 +35,38 @@ class Response {
 	}
 	
 	public function sendHeaders() {
-		log_d(sprintf('Sending headers: %s', json_encode($this->headers)), 'ServiceResponse');
+		log_d(sprintf('Sending headers: %s', json_encode($this->headers)), 'TinyMvcServiceResponse');
 		foreach($this->headers as $name => $value) header(sprintf('%s: %s', $name, $value));
 	}
 	
 	public function redirect(string $uri = '') {
-		log_d(sprintf('Redirect uri: %s', $uri), 'ServiceResponse');
-		$this->setHeader('Location', service('url')->getBaseUrl() . $uri);
+		log_d(sprintf('Redirect uri: %s', $uri), 'TinyMvcServiceResponse');
+		$redirect_url = is_url($uri) ? $uri : service('url')->getUrl($uri);
+		log_d(sprintf('Redirect url: %s', $redirect_url), 'TinyMvcServiceResponse');
+		$this->setHeader('Location',  $redirect_url);
 		return $this;
 	}
 	
 	public function __destruct() {
 		if($this->body !== null) echo $this->body;
 		if(defined('HTTP_RESPONSE_CODE_SETTED')) $this->code = HTTP_RESPONSE_CODE_SETTED;
-		log_d(sprintf('HTTP code: %d', $this->code), 'ServiceResponse');
+		log_d(sprintf('HTTP code: %d', $this->code), 'TinyMvcServiceResponse');
 		if(!headers_sent()) {
 			http_response_code($this->code);
 			$this->sendHeaders();
-		} else log_d('Headers already sended, cannot send again', 'ServiceResponse');
+		} else log_d('Headers already sended, cannot send again', 'TinyMvcServiceResponse');
 		
 	}
 	
 	public function mergeFromResponseJson(\TinyMvc\Service\ResponseJson $class) {
-		log_d('Merging from ResponseJson', 'ServiceResponse');
+		log_d('Merging from ResponseJson', 'TinyMvcServiceResponse');
 		$this->setHeader('Content-Type', 'application/json');
 		$this->body = json_encode($class->getAllData());
-		log_d(sprintf('JSON: %s', $this->body), 'ServiceResponse');
+		log_d(sprintf('JSON: %s', $this->body), 'TinyMvcServiceResponse');
 	}
 	
 	public function mergeFromTemplate(\TinyMvc\Service\Template $class) {
-		log_d('Merging from Template', 'ServiceResponse');
+		log_d('Merging from Template', 'TinyMvcServiceResponse');
 		$this->body = $class->html;
 	}
 	

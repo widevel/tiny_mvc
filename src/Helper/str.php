@@ -9,6 +9,8 @@
 */
 
 define('RANDOM_STRING_CHARSET', '1sABWhiUmaqOfnD6gJN2xTFYK7X9GeMQ0bCduPwc8pHRtv3loZzSrVjE4LIky5');
+define('RANDOM_NUMBER_CHARSET', '0123456789');
+define('UNSERIALIZE_ERR', -55557411145);
 
 function generate_random_hash(string $algo = 'md5') :string {
 	return hash($algo, (microtime() . mt_rand() . random_bytes(16)));
@@ -16,6 +18,10 @@ function generate_random_hash(string $algo = 'md5') :string {
 
 function generate_random_str(int $length) :string {
 	return substr(string_walk_recursive(RANDOM_STRING_CHARSET, 'str_shuffle', rand(5,15)),0, $length);
+}
+
+function generate_random_number(int $length) :string {
+	return (string) substr(string_walk_recursive(RANDOM_NUMBER_CHARSET, 'str_shuffle', rand(5,15)),0, $length);
 }
 
 function string_walk_recursive(string $str, string $func, int $amount, int $index = 1) {
@@ -53,4 +59,53 @@ function posOrZero(int $n) {
 
 function prevent_xss($str) {
 	return strip_tags(htmlentities($str, ENT_QUOTES));
+}
+
+function str_format(string $str, ...$args) : string {
+	return str_replace(array_map('str_format_args_walk', array_keys($args)), $args, $str);
+}
+
+function str_format_args_walk($n) :string {
+	return '{' . $n . '}';
+}
+
+function human_money_eur(float $amount) {
+	$amount_str = str_replace('.', ',', (string) $amount);
+	$amount_split = explode(',', $amount_str);
+	if(count($amount_split) > 1 && strlen($amount_split[1]) == 1) $amount_str .= '0';
+	return $amount_str . ' €';
+}
+
+function _var_dump($a) {
+	ob_start();
+	var_dump($a);
+	return ob_get_clean();
+}
+
+function str_startwith($str, $prefix, $s = 0) {
+	$str = strtolower($str);
+	$prefix = strtolower($prefix);
+	return substr($str,$s,strlen($prefix)) == $prefix;
+}
+
+function str_startwith_arr($str, $arr) {
+	$r = false;
+	foreach($arr as $v) {
+		if(str_startwith($str, $v)) return true;
+	}
+	return $r;
+}
+
+function stripos_arr($str, $arr) {
+	foreach($arr as $v) {
+		if(stripos($str, $v) !== false) return true;
+	}
+	return false;
+}
+
+function _unserialize(string $serialized) {
+	log_d('serialized str:' . $serialized, 'TinyMvcHelperStr');
+	$data = unserialize($serialized);
+	if ($serialized === 'b:0;' || $data !== false) return $data;
+	return UNSERIALIZE_ERR;
 }

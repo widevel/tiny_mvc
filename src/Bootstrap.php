@@ -38,7 +38,7 @@ class TinyMvcBootstrap {
 			$services_arr['request'] = Request::class;
 		}
 		
-		$services_yaml_file = realpath(__DIR__ . '/../../../config/services.yaml');
+		$services_yaml_file = realpath(__DIR__ . '/../../../config/services'.(CLI_CONSOLE ? '_cmd' : '').'.yaml');
 		if($services_yaml_file !== false) {
 			$user_services = yaml_parse_file($services_yaml_file);
 			if(is_array($user_services)) {

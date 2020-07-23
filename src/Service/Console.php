@@ -14,18 +14,28 @@ class Console {
 	
 	public function __construct() {
 		global $argv;
-		$className = sprintf('\%s\Console\\%s', BUNDLE_NAME, CLASS_CONSOLE);
+		
+		$arguments = $argv;
+		
+		unset($arguments[0], $arguments[1]);
+		$arguments = array_values($arguments);
+		
+		log_d(sprintf('Input arguments %s', print_r($arguments, true)), 'TinyMvcServiceConsole');
+		
+		self::callConsoleClass(CLASS_CONSOLE, $arguments);
+	}
+	
+	public static function callConsoleClass(string $class_name, array $arguments = []) {
+		$className = sprintf('\%s\Console\\%s', BUNDLE_NAME, $class_name);
 		
 		if(!class_exists($className)) {
 			throw new \Exception(sprintf('Class %s not exists', $className));
 			return;
 		}
 		
-		$arguments = $argv;
+		if(count($arguments) >= 2 && $arguments[0] == 'serialized') $arguments = cmd_unserialize_arguments($arguments[1]);
 		
-		unset($arguments[0], $arguments[1]);
-		
-		$arguments = array_values($arguments);
+		log_d(sprintf('Arguments %s', print_r($arguments, true)), 'TinyMvcServiceConsole');
 		
 		$reflector = new \ReflectionClass($className);
 		$reflector->newInstanceArgs($arguments);
