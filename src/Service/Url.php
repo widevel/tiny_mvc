@@ -10,18 +10,30 @@
 namespace TinyMvc\Service;
 
 class Url {
-	public $base_url, $segments, $arguments;
+	public $base_url, $segments = [], $arguments = [], $base_path;
 	public function __construct() {
-		$this->base_path = $this->getBasePath();
-		$this->base_url = $this->getBaseUrl();
-		$this->segments = array_key_exists('path', $_GET) ? array_values(explode('/', $_GET['path'])) : [];
-		$this->arguments = $this->segments;
-		if(count($this->arguments) > 0) {
-			if(count($this->arguments) == 1) unset($this->arguments[0]);
-			if(count($this->arguments) >= 2) unset($this->arguments[0], $this->arguments[1]);
-			
-			$this->arguments = array_values($this->arguments);
+		
+		if(CLI_CONSOLE) {
+			$config_url = service('config')->get('url');
+			if(!array_key_exists('base_path', $config_url)) throw new \Exception('base_path not defined en url.yaml');
+			if(!array_key_exists('base_url', $config_url)) throw new \Exception('base_url not defined en url.yaml');
+			$this->base_path = $config_url['base_path'];
+			$this->base_url = $config_url['base_url'];
+		} else {
+			$this->base_path = $this->getBasePath();
+			$this->base_url = $this->getBaseUrl();
+
+			$this->segments = array_key_exists('path', $_GET) ? array_values(explode('/', $_GET['path'])) : [];
+			$this->arguments = $this->segments;
+			if(count($this->arguments) > 0) {
+				if(count($this->arguments) == 1) unset($this->arguments[0]);
+				if(count($this->arguments) >= 2) unset($this->arguments[0], $this->arguments[1]);
+				
+				$this->arguments = array_values($this->arguments);
+			}
 		}
+		
+		
 	}
 	
 	public function getSegment($n) { return array_key_exists((int) $n, $this->segments) ? $this->segments[(int) $n] : null; }
@@ -33,6 +45,7 @@ class Url {
 	public function getArgumentsCount() { return count($this->arguments); }
 	
 	public function getBaseUrl() {
+		if($this->base_url) return $this->base_url;
 		$port = (int) $_SERVER['SERVER_PORT'];
 		$hostname = $_SERVER['HTTP_HOST'];
 		$is_https = (bool) (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on');
@@ -51,6 +64,7 @@ class Url {
 	}
 	
 	private function getBasePath() {
+		if($this->base_path) return $this->base_path;
 		$base_path =  array_key_exists('PATH_INFO', $_SERVER) ? substr($_SERVER['PHP_SELF'], 0, -strlen($_SERVER['PATH_INFO'])) : $_SERVER['PHP_SELF'];
 		
 		if(basename($base_path) == 'index.php') $base_path = substr($base_path,0,-strlen('index.php'));
