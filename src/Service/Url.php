@@ -10,7 +10,7 @@
 namespace TinyMvc\Service;
 
 class Url {
-	public $base_url, $segments = [], $arguments = [], $base_path;
+	public $base_url, $segments = [], $arguments = [], $base_path, $current_url, $referer;
 	public function __construct() {
 		
 		if(CLI_CONSOLE) {
@@ -22,6 +22,9 @@ class Url {
 		} else {
 			$this->base_path = $this->getBasePath();
 			$this->base_url = $this->getBaseUrl();
+			
+			if(array_key_exists('HTTP_REFERER', $_SERVER)) $this->referer = $_SERVER['HTTP_REFERER'];
+			
 
 			$this->segments = array_key_exists('path', $_GET) ? array_values(explode('/', $_GET['path'])) : [];
 			$this->arguments = $this->segments;
@@ -31,6 +34,8 @@ class Url {
 				
 				$this->arguments = array_values($this->arguments);
 			}
+			
+			$this->current_url = $this->getCurrentUrl();
 		}
 		
 		
@@ -56,6 +61,17 @@ class Url {
 		
 		return sprintf('http%s://%s%s', $http_part, $hostname_part, $this->base_path);
 	}
+	
+	public function getCurrentUrl()
+    {
+		$query_arr = [];
+		foreach($_GET as $k => $v) {
+			if($k == 'path') continue;
+			$query_arr[] = $k . (strlen($v) > 0 ? '=' . urlencode($v) : '');
+		}
+		$query_string = (count($query_arr) > 0 ? '?' : '') . implode('&', $query_arr);
+        return  $this->base_url . implode('/', $this->getSegments()) . $query_string; die();
+    }
 	
 	public function getUrl($uri) {
 		$url = $this->getBaseUrl() . $uri;

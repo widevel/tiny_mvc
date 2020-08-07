@@ -70,6 +70,7 @@ class Element {
 		if($value === null) return null;
 		switch($cast) {
 			case 'integer':
+			case 'int':
 				return (int) $value;
 				break;
 			case 'bool':

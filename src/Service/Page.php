@@ -18,38 +18,15 @@ class Page {
 		
 		$route_service = service('route');
 		
-		$page_segment = service('url')->getSegment(0) !== null ? strtolower(service('url')->getSegment(0)) : null;
-		$action_segment = service('url')->getSegment(1) !== null ? strtolower(service('url')->getSegment(1)) : null;
+		$page_segment = $route_service->page_segment;
+		$action_segment = $route_service->action_segment;
 		
 		$actionArguments = [];
 		
 		if($route_service->isEnabled()) {
-			if($page_segment === null && $action_segment === null) {
-				$route = $route_service->getDefault();
-				if(!is_object($route)) {
-					log_d('Default route not exists', 'TinyMvcServicePage');
-					$response_service->setCode(404);
-					return;
-				}
-			} else {
-				$route_uri = $page_segment . '/' . $action_segment;
-				$route = $route_service->getByUri($route_uri);
-				if(!is_object($route)) {
-					log_d(sprintf('Route for uri %s not exists', $route_uri), 'TinyMvcServicePage');
-					$response_service->setCode(404);
-					return;
-				}
-			}
-			
-			$route_service->setCurrent($route->getName());
-			
-			list($relativeClassName, $actionName) = explode('::', $route->getClass());
-			$argument_index = 0;
-			foreach($route->getArguments() as $argument) {
-				$argument->setValue(service('url')->getArgument($argument_index));
-				$actionArguments[] = $argument->getValue();
-				$argument_index++;
-			}
+			$relativeClassName = $route_service->relativeClassName;
+			$actionName = $route_service->actionName;
+			$actionArguments = $route_service->actionArguments;
 		} else {
 			$page = self::getPageNameFromSegment($page_segment);
 			$actionName = self::getActionNameFromSegment($action_segment);

@@ -15,5 +15,9 @@ function cookie_get(string $name) { return array_key_exists($name, $GLOBALS['coo
 
 function cookie_set(string $name, string $value, int $expires) {
 	$GLOBALS['cookies_list'][$name] = $value;
-	setcookie($name, $value, time() + $expires, service('url')->base_path);
+	setcookie($name, $value, [
+		'expires' => time() + $expires,
+		'path' => service('url')->base_path,
+		'samesite' => 'Lax'
+	]);
 }

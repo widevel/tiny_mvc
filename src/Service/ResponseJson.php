@@ -18,6 +18,7 @@ class ResponseJson {
 	}
 	
 	public function getAllData(): array {
+		log_d(sprintf('json %s', print_r($this->data, true)), 'TinyMvcServiceResponseJson');
 		return $this->data;
 	}
 }

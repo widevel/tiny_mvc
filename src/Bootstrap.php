@@ -53,6 +53,7 @@ class TinyMvcBootstrap {
 		
 		foreach($services_arr as $service_name => $class_name) {
 			if(!class_exists($class_name)) throw new \Exception(sprintf('Unable to load service %s class %s not exists', $service_name, $class_name));
+			if(service_exists($service_name)) continue;
 			$this->service_load($service_name, $class_name);
 		}
 	}

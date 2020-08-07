@@ -7,6 +7,9 @@
  *
  * @author     Marco iosif Constantinescu <marco.isfc@gmail.com>
 */
+function route_exists(string $name) :bool {
+	return service('route')->exists($name);
+}
 function route_url(string $name, array $params = [], string $sufix = null, bool $abs_url = true) {
 	return route_uri($name, $params, $sufix, true);
 }

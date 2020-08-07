@@ -16,8 +16,13 @@ class Route {
 	
 	private $enabled = false, $routes = [], $routes_by_uri = [], $current;
 	
+	public $page_segment, $action_segment, $actionArguments = [], $relativeClassName, $actionName;
+	
 	public function __construct() {
 		$config = service('config')->get('route', false);
+		
+		$this->page_segment = service('url')->getSegment(0) !== null ? strtolower(service('url')->getSegment(0)) : null;
+		$this->action_segment = service('url')->getSegment(1) !== null ? strtolower(service('url')->getSegment(1)) : null;
 		
 		$this->enabled = (is_array($config) && array_key_exists('auto_route', $config) && $config['auto_route'] === true);
 		
@@ -53,6 +58,35 @@ class Route {
 			
 		}
 		
+		/* ROUTE CHECK */
+		
+		if($this->page_segment === null && $this->action_segment === null) {
+			$route = $this->getDefault();
+			if(!is_object($route)) {
+				log_d('Default route not exists', 'TinyMvcServiceRoute');
+				service('response')->setCode(404);
+				die();
+			}
+		} else {
+			$route_uri = $this->page_segment . '/' . $this->action_segment;
+			$route = $this->getByUri($route_uri);
+			if(!is_object($route)) {
+				log_d(sprintf('Route for uri %s not exists', $route_uri), 'TinyMvcServiceRoute');
+				service('response')->setCode(404);
+				die();
+			}
+		}
+		
+		$this->setCurrent($route->getName());
+		
+		list($this->relativeClassName, $this->actionName) = explode('::', $route->getClass());
+		$argument_index = 0;
+		foreach($route->getArguments() as $argument) {
+			$argument->setValue(service('url')->getArgument($argument_index));
+			$this->actionArguments[] = $argument->getValue();
+			$argument_index++;
+		}
+		
 	}
 	
 	
@@ -60,7 +94,8 @@ class Route {
 	public function setCurrent(string $name) { $this->current = $this->get($name); }
 	public function getCurrent() { return $this->current; }
 	public function getByUri(string $uri) { $uri = rtrim($uri, '/'); return array_key_exists($uri, $this->routes_by_uri) && $this->get($this->routes_by_uri[$uri]) !== null ? $this->get($this->routes_by_uri[$uri]) : null; }
-	public function get(string $name) {return array_key_exists($name, $this->routes) ? $this->routes[$name] : null; }
+	public function get(string $name) { return array_key_exists($name, $this->routes) ? $this->routes[$name] : null; }
+	public function exists(string $name) { return array_key_exists($name, $this->routes); }
 	public function getDefault() { return array_key_exists('default', $this->routes) ? $this->routes['default'] : null; }
 	
 	
