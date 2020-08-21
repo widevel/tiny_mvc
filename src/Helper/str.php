@@ -69,11 +69,11 @@ function str_format_args_walk($n) :string {
 	return '{' . $n . '}';
 }
 
-function human_money_eur(float $amount) {
-	$amount_str = str_replace('.', ',', (string) $amount);
-	$amount_split = explode(',', $amount_str);
-	if(count($amount_split) > 1 && strlen($amount_split[1]) == 1) $amount_str .= '0';
-	return $amount_str . ' €';
+function float_fixed(float $f, int $d) {
+    $split = explode('.', (string) $f);
+    if(count($split) <= 1) return $f;
+    list($i, $dec) = $split;
+    return (float) ($i . '.' . substr($dec,0,$d));
 }
 
 function _var_dump($a) {

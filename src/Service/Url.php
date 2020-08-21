@@ -66,7 +66,7 @@ class Url {
     {
 		$query_arr = [];
 		foreach($_GET as $k => $v) {
-			if($k == 'path') continue;
+			if($k === 'path') continue;
 			$query_arr[] = $k . (strlen($v) > 0 ? '=' . urlencode($v) : '');
 		}
 		$query_string = (count($query_arr) > 0 ? '?' : '') . implode('&', $query_arr);
@@ -83,7 +83,7 @@ class Url {
 		if($this->base_path) return $this->base_path;
 		$base_path =  array_key_exists('PATH_INFO', $_SERVER) ? substr($_SERVER['PHP_SELF'], 0, -strlen($_SERVER['PATH_INFO'])) : $_SERVER['PHP_SELF'];
 		
-		if(basename($base_path) == 'index.php') $base_path = substr($base_path,0,-strlen('index.php'));
+		if(basename($base_path) === 'index.php') $base_path = substr($base_path,0,-strlen('index.php'));
 		
 		if(substr($base_path,-1) != '/') $base_path .= '/';
 		

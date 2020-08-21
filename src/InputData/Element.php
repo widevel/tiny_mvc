@@ -31,7 +31,7 @@ class Element {
 	public function getArraySeparator() { return $this->array_separator !== null ? $this->array_separator : null; }
 	public function getValue() { return !$this->isEmpty() ? $this->formatValue($this->value, $this->cast) : ($this->value_setted === false ? $this->default_value : null); }
 	public function getOriginalValue() { return $original_value; }
-	public function isEmpty() { return $this->value === null || $this->value !== null || ($this->value !== null && $this->cast == 'array' && count($this->getValue() > 0)) ? false : true; }
+	public function isEmpty() { return $this->value === null || $this->value !== null || ($this->value !== null && $this->cast === 'array' && count($this->getValue() > 0)) ? false : true; }
 	
 	public function setName(string $name) { $this->name = $name; }
 	public function setCast(string $cast) { $this->cast = $cast; }
@@ -50,13 +50,13 @@ class Element {
 			return $this->formatValue($value, gettype($value));
 		}
 		
-		if($cast == 'base64') $cast = 'string';
+		if($cast === 'base64') $cast = 'string';
 		
-		if($cast == 'string' && count($this->map_func) > 0) foreach($this->map_func as $func) $value = call_user_func_array($func, [$value]);
-		if($cast == 'string' && $this->preg_replace !== false) $value = preg_replace($this->preg_replace, "", $value);
-		if($cast == 'string' && $this->max_length > 0 && strlen($value) > $this->max_length) $value = substr($value, 0, $this->max_length);
-		if($cast == 'string' && strlen($value) === 0) $value = null;
-		if($cast == 'array') return ($this->array_max_elements > 0 ? array_slice($this->formatArr($value),0,$this->array_max_elements) : $this->formatArr($value));
+		if($cast === 'string' && count($this->map_func) > 0) foreach($this->map_func as $func) $value = call_user_func_array($func, [$value]);
+		if($cast === 'string' && $this->preg_replace !== false) $value = preg_replace($this->preg_replace, "", $value);
+		if($cast === 'string' && $this->max_length > 0 && strlen($value) > $this->max_length) $value = substr($value, 0, $this->max_length);
+		if($cast === 'string' && strlen($value) === 0) $value = null;
+		if($cast === 'array') return ($this->array_max_elements > 0 ? array_slice($this->formatArr($value),0,$this->array_max_elements) : $this->formatArr($value));
 		return $value;
 		
 	}
@@ -80,7 +80,9 @@ class Element {
 			case 'string':
 				return (string) $value;
 				break;
-				
+			case 'json':
+				return json_decode($value);
+				break;	
 			case 'double':
 			case 'float':
 				return self::stringToDouble($value, $this->double_decimals);

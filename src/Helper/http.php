@@ -16,7 +16,7 @@ function background_http_request($url, array $post = []) {
     $method = (count($post) > 0) ? 'POST' : 'GET';
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-    if($method == 'POST') {
+    if($method === 'POST') {
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);   
     }

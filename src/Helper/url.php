@@ -8,7 +8,7 @@
  * @author     Marco iosif Constantinescu <marco.isfc@gmail.com>
 */
 function is_url(string $url) {
-	return substr($url,0,7) == 'http://' || substr($url,0,8) == 'https://';
+	return substr($url,0,7) === 'http://' || substr($url,0,8) === 'https://';
 }
 
 function add_params_url(string $url, array $params) {

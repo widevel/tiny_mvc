@@ -33,7 +33,7 @@ class Console {
 			return;
 		}
 		
-		if(count($arguments) >= 2 && $arguments[0] == 'serialized') $arguments = cmd_unserialize_arguments($arguments[1]);
+		if(count($arguments) >= 2 && $arguments[0] === 'serialized') $arguments = cmd_unserialize_arguments($arguments[1]);
 		
 		log_d(sprintf('Arguments %s', print_r($arguments, true)), 'TinyMvcServiceConsole');
 		

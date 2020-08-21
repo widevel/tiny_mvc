@@ -17,7 +17,7 @@ function load_php_files($directory) {
 			if(is_dir($abs_path)) {
 				load_php_files($abs_path);
 			} else if(is_file($abs_path)) {
-				if(pathinfo($file, PATHINFO_EXTENSION) == 'php') {
+				if(pathinfo($file, PATHINFO_EXTENSION) === 'php') {
 					if(!in_array($abs_path, get_included_files())) include_once($abs_path);
 				}
 			}
