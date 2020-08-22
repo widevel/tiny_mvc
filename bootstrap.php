@@ -25,13 +25,12 @@ function onErrorHandler($errno, $errstr, $errfile, $errline) {
 function AppErrorHandler($type, $message, $file, $line) {
 	$err_message = sprintf("%s\nFile %s Line %d", $message, $file, (int) $line);
 	
-	$err_fatal = (bool) (($type === E_ERROR || $type === E_USER_ERROR) || DEBUG);
+	$err_fatal = (bool) (($type === E_ERROR || $type === E_USER_ERROR) || THROW_ERR_ANY);
 	
 	if($err_fatal) {
 		http_response_code(500);
 		define('HTTP_RESPONSE_CODE_SETTED', 1);
 	}
-	if(DEBUG) echo CLI_CONSOLE ? $err_message . "\n" : '<pre>' . $err_message . '</pre><br>' . "\n";
 	if(function_exists('service_exists') && service_exists('log')) {
 		log_e($err_message);
 	}
