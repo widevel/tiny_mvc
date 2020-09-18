@@ -56,6 +56,7 @@ class Element {
 		if($cast === 'string' && $this->preg_replace !== false) $value = preg_replace($this->preg_replace, "", $value);
 		if($cast === 'string' && $this->max_length > 0 && strlen($value) > $this->max_length) $value = substr($value, 0, $this->max_length);
 		if($cast === 'string' && strlen($value) === 0) $value = null;
+		if($cast === 'array' && !is_array($value)) return [];
 		if($cast === 'array') return ($this->array_max_elements > 0 ? array_slice($this->formatArr($value),0,$this->array_max_elements) : $this->formatArr($value));
 		return $value;
 		
@@ -67,33 +68,32 @@ class Element {
 	}
 	
 	private function castValue($value, string $cast = null) {
-		if($value === null) return null;
 		switch($cast) {
 			case 'integer':
 			case 'int':
-				return (int) $value;
+				return $value === null ? 0 : (int) $value;
 				break;
 			case 'bool':
 			case 'boolean':
-				return (boolean) $value;
+				return $value === null ? false : (boolean) $value;
 				break;
 			case 'string':
 				return (string) $value;
 				break;
 			case 'json':
-				return json_decode($value);
+				return $value === null ? null : json_decode($value);
 				break;	
 			case 'double':
 			case 'float':
-				return self::stringToDouble($value, $this->double_decimals);
+				return $value === null ? ((float) 0) : self::stringToDouble($value, $this->double_decimals);
 				break;
 				
 			case 'array':
-				return self::stringToArray($value, $this->array_separator);
+				return $value === null ? [] : (is_array($value) ? $value : self::stringToArray($value, $this->array_separator));
 				break;
 				
 			case 'base64':
-				return base64_decode($value);
+				return $value === null ? null : base64_decode($value);
 				break;
 		}
 		

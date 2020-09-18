@@ -20,6 +20,7 @@ class Path {
 		$this->logs = $this->base . 'logs' . DIRECTORY_SEPARATOR;
 		$this->config = $this->base . 'config' . DIRECTORY_SEPARATOR;
 		$this->cache = $this->base . 'cache' . DIRECTORY_SEPARATOR;
+		$this->tmp = $this->base . 'tmp' . DIRECTORY_SEPARATOR;
 	}
 	
 	

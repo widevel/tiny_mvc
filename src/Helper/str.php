@@ -13,7 +13,7 @@ define('RANDOM_NUMBER_CHARSET', '0123456789');
 define('UNSERIALIZE_ERR', -55557411145);
 
 function generate_random_hash(string $algo = 'md5') :string {
-	return hash($algo, (microtime() . mt_rand() . random_bytes(16)));
+	return hash($algo, (microtime() . generate_random_str(512) . random_bytes(16)));
 }
 
 function generate_random_str(int $length) :string {

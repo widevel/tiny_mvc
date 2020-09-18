@@ -21,10 +21,12 @@ class Log {
 	const LINE_DATE_FORMAT = 'Y-m-d H:i:s';
 	const LINE_FORMAT = '[%s.%s] (%s) (%s): %s';
 	
-	private $unique, $path;
+	private $path;
+	
+	public static $unique;
 	
 	public function __construct() {
-		$this->unique = generate_random_hash();
+		self::$unique = generate_random_hash();
 		$this->path = service('path')->logs;
 	}
 	
@@ -47,7 +49,7 @@ class Log {
 		$line_str = log_generate_line(
 			self::LINE_FORMAT,
 			self::LINE_DATE_FORMAT,
-			$this->unique,
+			self::$unique,
 			$level,
 			$message,
 			$time,

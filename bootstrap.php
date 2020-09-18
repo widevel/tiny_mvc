@@ -13,7 +13,7 @@ if(!defined('CLI_CONSOLE')) define('CLI_CONSOLE', 0);
 function onShutDown() {
 	$last_error = error_get_last();
 	if(!is_array($last_error)) return;
-	if($last_error['type'] === E_ERROR || $last_error['type'] === E_USER_ERROR) {
+	if(in_array($last_error['type'], [E_PARSE,E_ERROR,E_USER_ERROR,E_CORE_ERROR,E_COMPILE_ERROR])) {
 		AppErrorHandler($last_error['type'], $last_error['message'], $last_error['file'], $last_error['line']);
 	}
 }
@@ -27,15 +27,29 @@ function AppErrorHandler($type, $message, $file, $line) {
 	
 	$err_fatal = (bool) (($type === E_ERROR || $type === E_USER_ERROR) || THROW_ERR_ANY);
 	
+	$error_code = null;
+	
 	if($err_fatal) {
 		http_response_code(500);
-		define('HTTP_RESPONSE_CODE_SETTED', 1);
+		if(class_exists(\TinyMvc\Service\Response::class)) \TinyMvc\Service\Response::$HTTP_RESPONSE_CODE_SETTED = true;
 	}
 	if(function_exists('service_exists') && service_exists('log')) {
+		$error_code = \TinyMvc\Service\Log::$unique;
 		log_e($err_message);
 	}
+	if(CLI_CONSOLE && (int) DISPLAY_ERRORS === 0) echo $err_message . "\n";
 	
-	if($err_fatal) die();
+	if($err_fatal) {
+		if(!CLI_CONSOLE && DISPLAY_ERRORS === 0 && defined('FATAL_ERROR_HTML_PATH') && is_file(FATAL_ERROR_HTML_PATH) && is_readable(FATAL_ERROR_HTML_PATH)) show500ErrorTemplate(FATAL_ERROR_HTML_PATH, $error_code);
+		die();
+	}
+}
+
+function show500ErrorTemplate(string $path, string $error_code = null) {
+	ob_end_clean();
+	if($error_code !== null) {
+		include($path);
+	} else echo file_get_contents($path);
 }
 
 register_shutdown_function('onShutDown');

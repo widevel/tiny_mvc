@@ -121,6 +121,34 @@ class Database {
 		return null;
 	}
 	
+	
+	public function update(string $table, array $data, string $where_str, array $binds = []) {
+		
+		$set = [];
+		
+		foreach($data as $field => $value) {
+			$bind_mask = '%s';
+			if(is_int($value)) $bind_mask = '%d';
+			if(is_float($value)) $bind_mask = '%f';
+			if(is_double($value)) $bind_mask = '%f';
+			if(is_bool($value)) {
+				$data[$field] = $value?1:0;
+				$bind_mask = '%d';
+			}
+			if(is_null($value)) {
+				unset($data[$field]);
+				$bind_mask = 'NULL';
+			}
+			$set[] = sprintf('`%s` = %s', $field, $bind_mask);
+		}
+		
+		$sql = sprintf('UPDATE %s SET %s WHERE %s;', $table, implode(', ', $set), $where_str);
+		
+		$binds = array_merge(array_values($data), $binds);
+		
+		return $this->simpleQuery($sql, $binds);
+	}
+		
 	public function insert($table, $data, $ignore = false) {
 		$fields = implode('`,`', array_keys($data));
 		$values_part = implode(',', array_fill(0,count($data), '?'));

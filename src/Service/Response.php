@@ -15,6 +15,8 @@ class Response {
 	private $code = 200;
 	private $redirect;
 	
+	public static $HTTP_RESPONSE_CODE_SETTED = false;
+	
 	public function deleteHeader(string $name) {
 		if(array_key_exists($name, $this->headers)) unset($this->headers[$name]);
 		return $this;
@@ -49,7 +51,7 @@ class Response {
 	
 	public function __destruct() {
 		if($this->body !== null) echo $this->body;
-		if(defined('HTTP_RESPONSE_CODE_SETTED')) $this->code = HTTP_RESPONSE_CODE_SETTED;
+		if(self::$HTTP_RESPONSE_CODE_SETTED) $this->code = self::$HTTP_RESPONSE_CODE_SETTED;
 		log_d(sprintf('HTTP code: %d', $this->code), 'TinyMvcServiceResponse');
 		if(!headers_sent()) {
 			http_response_code($this->code);

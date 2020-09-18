@@ -37,7 +37,7 @@ class Form {
 		foreach($this->form->getFields() as $field) {
 			if($this->requestExists($field->getName())) {
 				$field_value = $this->getRequestData($field->getName());
-				log_d(sprintf('Field %s Value %s', $field->getName(), $field_value), 'TinyMvcServiceForm');
+				log_d(sprintf('Field %s Value %s', $field->getName(), _var_dump($field_value)), 'TinyMvcServiceForm');
 				$field->setValue($field_value);
 			}
 		}
