@@ -25,6 +25,8 @@ function onErrorHandler($errno, $errstr, $errfile, $errline) {
 function AppErrorHandler($type, $message, $file, $line) {
 	$err_message = sprintf("%s\nFile %s Line %d", $message, $file, (int) $line);
 	
+	if(DISPLAY_ERRORS === 1) echo $err_message . "\n";
+	
 	$err_fatal = (bool) (($type === E_ERROR || $type === E_USER_ERROR) || THROW_ERR_ANY);
 	
 	$error_code = null;

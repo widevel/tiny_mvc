@@ -12,16 +12,17 @@ namespace TinyMvc\Service;
 class Url {
 	public $base_url, $segments = [], $arguments = [], $base_path, $current_url, $referer;
 	public function __construct() {
+		$config_url = service('config')->get('url');
+		$this->base_url = $config_url['base_url'];
 		
 		if(CLI_CONSOLE) {
-			$config_url = service('config')->get('url');
 			if(!array_key_exists('base_path', $config_url)) throw new \Exception('base_path not defined en url.yaml');
 			if(!array_key_exists('base_url', $config_url)) throw new \Exception('base_url not defined en url.yaml');
 			$this->base_path = $config_url['base_path'];
-			$this->base_url = $config_url['base_url'];
+			
 		} else {
 			$this->base_path = $this->getBasePath();
-			$this->base_url = $this->getBaseUrl();
+			//$this->base_url = $this->getBaseUrl();
 			
 			if(array_key_exists('HTTP_REFERER', $_SERVER)) $this->referer = $_SERVER['HTTP_REFERER'];
 			
@@ -66,7 +67,7 @@ class Url {
     {
 		$query_arr = [];
 		foreach($_GET as $k => $v) {
-			if($k === 'path') continue;
+			if($k === 'path' || is_array($v)) continue;
 			$query_arr[] = $k . (strlen($v) > 0 ? '=' . urlencode($v) : '');
 		}
 		$query_string = (count($query_arr) > 0 ? '?' : '') . implode('&', $query_arr);
