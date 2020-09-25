@@ -19,7 +19,7 @@ class Route {
 	public $page_segment, $action_segment, $actionArguments = [], $relativeClassName, $actionName;
 	
 	public function __construct() {
-		$config = service('config')->get('route', false);
+		$config = get_config('route', false);
 		
 		$this->page_segment = service('url')->getSegment(0) !== null ? strtolower(service('url')->getSegment(0)) : null;
 		$this->action_segment = service('url')->getSegment(1) !== null ? strtolower(service('url')->getSegment(1)) : null;

@@ -12,7 +12,7 @@ namespace TinyMvc\Service;
 class Url {
 	public $base_url, $segments = [], $arguments = [], $base_path, $current_url, $referer;
 	public function __construct() {
-		$config_url = service('config')->get('url');
+		$config_url = get_config('url');
 		$this->base_url = $config_url['base_url'];
 		
 		if(CLI_CONSOLE) {

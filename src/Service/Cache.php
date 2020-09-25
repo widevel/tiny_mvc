@@ -20,7 +20,7 @@ class Cache {
 	private $adapter = self::ADAPTER_FILE, $adapterInstance;
 	
 	public function __construct() {
-		$config = service('config')->get('cache', false);
+		$config = get_config('cache', false);
 		
 		switch($this->adapter) {
 			case self::ADAPTER_FILE:

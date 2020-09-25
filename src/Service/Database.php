@@ -18,13 +18,13 @@ class Database {
 	public $modelsInstances = [], $models = [];
 	
 	public function __construct() {
-		$database_models_config = service('config')->get('database_models');
+		$database_models_config = get_config('database_models');
 		
 		if(!is_array($database_models_config)) throw new \Exception('unable to load database_models.yaml config');
 		
 		$this->models = $database_models_config;
 		
-		$database_config = service('config')->get('database');
+		$database_config = get_config('database');
 		
 		if(!is_array($database_config)) throw new \Exception('unable to load database.yaml config');
 		
