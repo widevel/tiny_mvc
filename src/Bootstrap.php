@@ -13,7 +13,7 @@ use TinyMvc\Service\Path;
 use TinyMvc\Service\Log;
 use TinyMvc\Service\Config;
 use TinyMvc\Service\Url;
-use TinyMvc\Service\Page;
+use TinyMvc\Service\Controller;
 use TinyMvc\Service\Console;
 use TinyMvc\Service\Request;
 
@@ -48,7 +48,7 @@ class TinyMvcBootstrap {
 			}
 		}
 		
-		if(!CLI_CONSOLE) $services_arr['page'] = Page::class;
+		if(!CLI_CONSOLE) $services_arr['controller'] = Controller::class;
 		if(CLI_CONSOLE) $services_arr['console'] = Console::class;
 		
 		foreach($services_arr as $service_name => $class_name) {

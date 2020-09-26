@@ -8,7 +8,7 @@
  * @author     Marco iosif Constantinescu <marco.isfc@gmail.com>
 */
 namespace TinyMvc\Service;
-use TinyMvc\Service\Page;
+use TinyMvc\Service\Controller;
 
 class Template {
 	public $html;

@@ -8,13 +8,14 @@
  * @author     Marco iosif Constantinescu <marco.isfc@gmail.com>
 */
 
-function log_generate_line(string $line_format, string $date_format, string $unique, int $level, $message, int $time, float $microtime) :string {
+function log_generate_line(string $line_format, string $date_format, string $unique, int $level, string $context = null, string $message, int $time, float $microtime) :string {
 	return sprintf(
 		$line_format,
 		date($date_format, $time),
 		fillStrLeft(get_microtime($microtime), 4, '0'),
 		$unique,
 		log_get_level_name($level),
+		$context,
 		log_format_message($message)
 	) . "\n";
 }
@@ -49,6 +50,25 @@ function log_get_level_name(int $level) :string {
 			break;
 		
 	}
+}
+
+function log_format_sprintf_args(array $args) :array {
+	foreach($args as $index => $value) {
+		if(is_array($value) || is_object($value) || is_resource($value) || is_scalar($value)) {
+			$args[$index] = print_r($value, true);
+			continue;
+		}
+		if(is_bool($value)) {
+			$args[$index] = ($value ? 'true' : 'false');
+			continue;
+		}
+		
+		if(is_null($value)) {
+			$args[$index] = null;
+			continue;
+		}
+	}
+	return $args;
 }
 
 function log_format_message($message) :string {

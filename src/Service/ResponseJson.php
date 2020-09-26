@@ -10,6 +10,9 @@
 namespace TinyMvc\Service;
 
 class ResponseJson {
+	
+	const LOG_TAG = 'TinyMvc.Service_ResponseJson';
+	
 	private $data = [];
 	
 	public function setData($name, $value = null) :object {
@@ -18,7 +21,7 @@ class ResponseJson {
 	}
 	
 	public function getAllData(): array {
-		log_d(sprintf('json %s', print_r($this->data, true)), 'TinyMvcServiceResponseJson');
+		log_d(self::LOG_TAG, 'json %s', $this->data);
 		return $this->data;
 	}
 }

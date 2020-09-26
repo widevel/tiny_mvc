@@ -27,7 +27,7 @@ function call_console_cmd(string $name, array $arguments = [], bool $background 
 	}
 	
 	if($background) $cmd .= cmd_get_background_str();
-	log_d('cmd:' . $cmd, 'TinyMvcHelperCmd');
+	log_d('TinyMvc.HelperCmd', 'cmd:' . $cmd);
 	return shell_exec($cmd);
 }
 

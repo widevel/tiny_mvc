@@ -6,6 +6,8 @@ use TinyMvc\InputData\Form as FormData;
 
 class Form {
 	
+	const LOG_TAG = 'TinyMvc.Library_Form';
+	
 	private $form_service, $form, $source_data = [];
 	
 	public function __construct(string $name) {
@@ -25,7 +27,7 @@ class Form {
 	}
 	
 	public function populate() {
-		log_d(sprintf('Method %s', $this->form->getMethod()), 'TinyMvcServiceForm');
+		log_d(self::LOG_TAG, 'Method %s', $this->form->getMethod());
 		switch($this->form->getMethod()) {
 			case 'POST':
 				$this->source_data = $_POST;
@@ -37,7 +39,7 @@ class Form {
 		foreach($this->form->getFields() as $field) {
 			if($this->requestExists($field->getName())) {
 				$field_value = $this->getRequestData($field->getName());
-				log_d(sprintf('Field %s Value %s', $field->getName(), _var_dump($field_value)), 'TinyMvcServiceForm');
+				log_d(self::LOG_TAG, 'Field %s Value %s', $field->getName(), $field_value);
 				$field->setValue($field_value);
 			}
 		}

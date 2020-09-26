@@ -10,6 +10,9 @@
 namespace TinyMvc\Service;
 
 class Response {
+	
+	const LOG_TAG = 'TinyMvc.Service_Response';
+	
 	private $body;
 	private $headers = [];
 	private $code = 200;
@@ -37,14 +40,14 @@ class Response {
 	}
 	
 	public function sendHeaders() {
-		log_d(sprintf('Sending headers: %s', json_encode($this->headers)), 'TinyMvcServiceResponse');
+		log_d(self::LOG_TAG, 'Sending headers: %s', $this->headers);
 		foreach($this->headers as $name => $value) header(sprintf('%s: %s', $name, $value));
 	}
 	
 	public function redirect(string $uri = '') {
-		log_d(sprintf('Redirect uri: %s', $uri), 'TinyMvcServiceResponse');
+		log_d(self::LOG_TAG, 'Redirect uri: %s', $uri);
 		$redirect_url = is_url($uri) ? $uri : service('url')->getUrl($uri);
-		log_d(sprintf('Redirect url: %s', $redirect_url), 'TinyMvcServiceResponse');
+		log_d(self::LOG_TAG, 'Redirect url: %s', $redirect_url);
 		$this->setHeader('Location',  $redirect_url);
 		return $this;
 	}
@@ -52,23 +55,23 @@ class Response {
 	public function __destruct() {
 		if($this->body !== null) echo $this->body;
 		if(self::$HTTP_RESPONSE_CODE_SETTED) $this->code = self::$HTTP_RESPONSE_CODE_SETTED;
-		log_d(sprintf('HTTP code: %d', $this->code), 'TinyMvcServiceResponse');
+		log_d(self::LOG_TAG, 'HTTP code: %d', $this->code);
 		if(!headers_sent()) {
 			http_response_code($this->code);
 			$this->sendHeaders();
-		} else log_d('Headers already sended, cannot send again', 'TinyMvcServiceResponse');
+		} else log_e(self::LOG_TAG, 'Headers already sended, cannot send again');
 		
 	}
 	
 	public function mergeFromResponseJson(\TinyMvc\Service\ResponseJson $class) {
-		log_d('Merging from ResponseJson', 'TinyMvcServiceResponse');
+		log_d(self::LOG_TAG, 'Merging from ResponseJson');
 		$this->setHeader('Content-Type', 'application/json');
 		$this->body = json_encode($class->getAllData());
-		log_d(sprintf('JSON: %s', $this->body), 'TinyMvcServiceResponse');
+		log_d(self::LOG_TAG, 'JSON: %s', $this->body);
 	}
 	
 	public function mergeFromTemplate(\TinyMvc\Service\Template $class) {
-		log_d('Merging from Template', 'TinyMvcServiceResponse');
+		log_d(self::LOG_TAG, 'Merging from Template');
 		$this->body = $class->html;
 	}
 	

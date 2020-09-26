@@ -11,7 +11,8 @@ namespace TinyMvc\Service;
 
 class Console {
 	
-	
+	const LOG_TAG = 'TinyMvc.Service_Console';
+
 	public function __construct() {
 		global $argv;
 		
@@ -20,7 +21,7 @@ class Console {
 		unset($arguments[0], $arguments[1]);
 		$arguments = array_values($arguments);
 		
-		log_d(sprintf('Input arguments %s', print_r($arguments, true)), 'TinyMvcServiceConsole');
+		log_d(self::LOG_TAG, 'Input arguments %s', $arguments);
 		
 		self::callConsoleClass(CLASS_CONSOLE, $arguments);
 	}
@@ -35,7 +36,7 @@ class Console {
 		
 		if(count($arguments) >= 2 && $arguments[0] === 'serialized') $arguments = cmd_unserialize_arguments($arguments[1]);
 		
-		log_d(sprintf('Arguments %s', print_r($arguments, true)), 'TinyMvcServiceConsole');
+		log_d(self::LOG_TAG, 'Arguments %s', $arguments);
 		
 		$reflector = new \ReflectionClass($className);
 		$reflector->newInstanceArgs($arguments);

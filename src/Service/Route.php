@@ -14,6 +14,8 @@ use TinyMvc\Library\InputData;
 
 class Route {
 	
+	const LOG_TAG = 'TinyMvc.Service_Route';
+	
 	private $enabled = false, $routes = [], $routes_by_uri = [], $current;
 	
 	public $page_segment, $action_segment, $actionArguments = [], $relativeClassName, $actionName;
@@ -63,7 +65,7 @@ class Route {
 		if($this->page_segment === null && $this->action_segment === null) {
 			$route = $this->getDefault();
 			if(!is_object($route)) {
-				log_d('Default route not exists', 'TinyMvcServiceRoute');
+				log_w(self::LOG_TAG, 'Default route not exists');
 				service('response')->setCode(404);
 				die();
 			}
@@ -71,11 +73,14 @@ class Route {
 			$route_uri = $this->page_segment . '/' . $this->action_segment;
 			$route = $this->getByUri($route_uri);
 			if(!is_object($route)) {
-				log_d(sprintf('Route for uri %s not exists', $route_uri), 'TinyMvcServiceRoute');
+				log_e(self::LOG_TAG, 'Route for uri %s not exists', $route_uri);
 				service('response')->setCode(404);
 				die();
 			}
 		}
+		
+		log_d(self::LOG_TAG, 'Current Route Name %s', $route->getName());
+		log_d(self::LOG_TAG, 'Current Route %s', $route);
 		
 		$this->setCurrent($route->getName());
 		

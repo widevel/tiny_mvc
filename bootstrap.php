@@ -37,7 +37,7 @@ function AppErrorHandler($type, $message, $file, $line) {
 	}
 	if(function_exists('service_exists') && service_exists('log')) {
 		$error_code = \TinyMvc\Service\Log::$unique;
-		log_e($err_message);
+		log_e('Bootstrap', $err_message);
 	}
 	if(CLI_CONSOLE && (int) DISPLAY_ERRORS === 0) echo $err_message . "\n";
 	
