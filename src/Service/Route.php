@@ -73,7 +73,7 @@ class Route {
 			$route_uri = $this->page_segment . '/' . $this->action_segment;
 			$route = $this->getByUri($route_uri);
 			if(!is_object($route)) {
-				log_e(self::LOG_TAG, 'Route for uri %s not exists', $route_uri);
+				log_d(self::LOG_TAG, 'Route for uri %s not exists', $route_uri);
 				service('response')->setCode(404);
 				die();
 			}

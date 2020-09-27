@@ -19,8 +19,7 @@ class Log {
 	const FILENAME_WTAG_FORMAT = '%s_%s.log';
 	const FILENAME_FORMAT = '%s.log';
 	const LINE_DATE_FORMAT = 'Y-m-d H:i:s';
-	const LINE_FORMAT = '[%s.%s] (%s) (%s) (%s) (ctx_%s): %s';
-	const REDUNDANT_LEVELS = [self::LEVEL_WARNING, self::LEVEL_ERROR];
+	const LINE_FORMAT = '[%s.%s] (%s) (%s) (%s) (ctx_%s): '."\n".'%s';
 	
 	private $path;
 	
@@ -69,12 +68,12 @@ class Log {
 		
 		$sprintf_args = func_num_args() > 6 ? array_slice($arguments, 6, count($arguments)) : [];
 		
-		if($sprintf_args > 0) {
+		if(count($sprintf_args) > 0) {
 			$message = call_user_func_array('sprintf', array_merge([$message], log_format_sprintf_args($sprintf_args)));
 		}
 		
 		$original_context = $context;
-		$context = $tag !== null && in_array($level, self::REDUNDANT_LEVELS) && $context === null ? generate_random_hash() : $context;
+		$context = $tag !== null && $context === null ? generate_random_hash() : $context;
 		
 		$tag = $tag === null ? log_get_level_name($level) : log_format_tag($tag);
 		
@@ -96,7 +95,7 @@ class Log {
 		
 		if(IS_TEST) add_test_log_count($level);
 		
-		$file_rel_path = sprintf($tag, '.') !== false ? str_replace('.', DIRECTORY_SEPARATOR, $tag) : $tag;
+		$file_rel_path = stripos($tag, '.') !== false ? str_replace('.', DIRECTORY_SEPARATOR, $tag) : $tag;
 		
 		$file_dir = $this->path . dirname($file_rel_path);
 
@@ -106,15 +105,16 @@ class Log {
 		
 		$filepath = $this->path . sprintf(self::FILENAME_WTAG_FORMAT, $file_rel_path, $date_formated);
 		
-		$response = log_file_write($filepath, $line_str);
+		$response = log_file_write($filepath, "\n" . str_replace("\n", "\n\t", $line_str));
 		
-		if(in_array($level, self::REDUNDANT_LEVELS) && $context !== null && $original_context === null) {
+		if($context !== null && $original_context === null) {
 
 			$args = func_get_args();
 			$args[2] = $context;
 			$args[3] = $tag;
 			$args[4] = null;
-			$args[5] = sprintf('(Tag: %s) %s', $tag, $message);
+			$args[5] = sprintf('(Tag %s)'."\n".'%s', $tag, $message);
+			$args = array_slice($args, 0, 6);
 			return call_user_func_array([$this, 'write'], $args);
 		}
 		
