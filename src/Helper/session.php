@@ -20,7 +20,7 @@ function php_session_get(string $name) {
 	if(IS_TEST) {
 		return test_instance()->getSession($name);
 	} else {
-		return array_key_exists($name, $_SESSION) ? $_SESSION : null;
+		return array_key_exists($name, $_SESSION) ? $_SESSION[$name] : null;
 	}
 }
 
