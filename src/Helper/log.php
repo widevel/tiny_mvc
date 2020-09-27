@@ -8,13 +8,14 @@
  * @author     Marco iosif Constantinescu <marco.isfc@gmail.com>
 */
 
-function log_generate_line(string $line_format, string $date_format, string $unique, int $level, string $context = null, string $message, int $time, float $microtime) :string {
+function log_generate_line(string $line_format, string $date_format, string $unique, int $level, string $tag = null, string $context = null, string $message, int $time, float $microtime) :string {
 	return sprintf(
 		$line_format,
 		date($date_format, $time),
 		fillStrLeft(get_microtime($microtime), 4, '0'),
 		$unique,
 		log_get_level_name($level),
+		$tag,
 		$context,
 		log_format_message($message)
 	) . "\n";

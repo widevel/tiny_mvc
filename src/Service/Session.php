@@ -14,6 +14,6 @@ class Session {
 	const COOKIE_LIFETIME = 3600 * 24 * 7;
 	
 	public function __construct() {
-		if(session_status() != PHP_SESSION_ACTIVE) session_start(['cookie_lifetime' => SELF::COOKIE_LIFETIME]);
+		if(!headers_sent() && session_status() != PHP_SESSION_ACTIVE) session_start(['cookie_lifetime' => SELF::COOKIE_LIFETIME]);
 	}
 }

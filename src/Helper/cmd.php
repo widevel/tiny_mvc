@@ -52,7 +52,7 @@ function cmd_get_background_str() {
 function cmd_pass_arguments(array $arguments) {
 	$session_hash = generate_random_str(32);
 	$session_key = 'cmd_' . $session_hash;
-	$_SESSION[$session_key] = $arguments;
+	php_session_set($session_key, $arguments);
 	return $session_hash;
 }
 

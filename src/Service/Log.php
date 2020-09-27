@@ -19,7 +19,7 @@ class Log {
 	const FILENAME_WTAG_FORMAT = '%s_%s.log';
 	const FILENAME_FORMAT = '%s.log';
 	const LINE_DATE_FORMAT = 'Y-m-d H:i:s';
-	const LINE_FORMAT = '[%s.%s] (%s) (%s) (ctx_%s): %s';
+	const LINE_FORMAT = '[%s.%s] (%s) (%s) (%s) (ctx_%s): %s';
 	const REDUNDANT_LEVELS = [self::LEVEL_WARNING, self::LEVEL_ERROR];
 	
 	private $path;
@@ -29,23 +29,27 @@ class Log {
 	public function __construct() {
 		self::$unique = generate_random_hash();
 		$this->path = service('path')->logs;
+		if(IS_TEST) {
+			$this->path .= 'Test' . DIRECTORY_SEPARATOR;
+			if(!is_dir($this->path)) mkdir($this->path, 0777, true);
+		}
 	}
 	
 	public function debug() :bool {
 		if(func_num_args() < 2) throw new \Exception('2 arguments minimum are required');
-		$args = array_merge([self::LEVEL_DEBUG, microtime(true), null], func_get_args());
+		$args = array_merge([self::LEVEL_DEBUG, microtime(true), null, null], func_get_args());
 		return call_user_func_array([$this, 'write'], $args);
 	}
 	
 	public function warning() :bool {
 		if(func_num_args() < 2) throw new \Exception('2 arguments minimum are required');
-		$args = array_merge([self::LEVEL_WARNING, microtime(true), null], func_get_args());
+		$args = array_merge([self::LEVEL_WARNING, microtime(true), null, null], func_get_args());
 		return call_user_func_array([$this, 'write'], $args);
 	}
 	
 	public function error() :bool {
 		if(func_num_args() < 2) throw new \Exception('2 arguments minimum are required');
-		$args = array_merge([self::LEVEL_ERROR, microtime(true), null], func_get_args());
+		$args = array_merge([self::LEVEL_ERROR, microtime(true), null, null], func_get_args());
 		return call_user_func_array([$this, 'write'], $args);
 	}
 	
@@ -59,10 +63,11 @@ class Log {
 		
 		$microtime = $arguments[1];
 		$context = $arguments[2];
-		$tag = $arguments[3];
-		$message = $arguments[4];
+		$tag_context = $arguments[3];
+		$tag = $arguments[4];
+		$message = $arguments[5];
 		
-		$sprintf_args = func_num_args() > 5 ? array_slice($arguments, 5, count($arguments)) : [];
+		$sprintf_args = func_num_args() > 6 ? array_slice($arguments, 6, count($arguments)) : [];
 		
 		if($sprintf_args > 0) {
 			$message = call_user_func_array('sprintf', array_merge([$message], log_format_sprintf_args($sprintf_args)));
@@ -75,16 +80,21 @@ class Log {
 		
 		$time = get_time_from_microtime_func($microtime);
 		
+		$final_tag_name = $tag_context !== null ? $tag_context : $tag;
+		
 		$line_str = log_generate_line(
 			self::LINE_FORMAT,
 			self::LINE_DATE_FORMAT,
 			self::$unique,
 			$level,
+			$final_tag_name,
 			$context,
 			$message,
 			$time,
 			$microtime,
 		);
+		
+		if(IS_TEST) add_test_log_count($level);
 		
 		$file_rel_path = sprintf($tag, '.') !== false ? str_replace('.', DIRECTORY_SEPARATOR, $tag) : $tag;
 		
@@ -102,8 +112,9 @@ class Log {
 
 			$args = func_get_args();
 			$args[2] = $context;
-			$args[3] = null;
-			$args[4] = sprintf('(Tag: %s) %s', $tag, $message);
+			$args[3] = $tag;
+			$args[4] = null;
+			$args[5] = sprintf('(Tag: %s) %s', $tag, $message);
 			return call_user_func_array([$this, 'write'], $args);
 		}
 		

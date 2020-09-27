@@ -18,6 +18,8 @@ class Response {
 	private $code = 200;
 	private $redirect;
 	
+	private $response_json;
+	
 	public static $HTTP_RESPONSE_CODE_SETTED = false;
 	
 	public function deleteHeader(string $name) {
@@ -59,11 +61,15 @@ class Response {
 		if(!headers_sent()) {
 			http_response_code($this->code);
 			$this->sendHeaders();
-		} else log_e(self::LOG_TAG, 'Headers already sended, cannot send again');
+		}
+		//else log_e(self::LOG_TAG, 'Headers already sended, cannot send again');
 		
 	}
 	
+	public function getResponseJson() :?object { return $this->response_json; }
+	
 	public function mergeFromResponseJson(\TinyMvc\Service\ResponseJson $class) {
+		$this->response_json = $class;
 		log_d(self::LOG_TAG, 'Merging from ResponseJson');
 		$this->setHeader('Content-Type', 'application/json');
 		$this->body = json_encode($class->getAllData());

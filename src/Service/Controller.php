@@ -69,6 +69,7 @@ class Controller {
 			$response_service->mergeData($return);
 		} else log_d(self::LOG_TAG, 'Page return: null');
 		
+		if(IS_TEST) test_after();
 		
 	}
 	
