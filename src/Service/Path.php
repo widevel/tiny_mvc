@@ -21,6 +21,7 @@ class Path {
 		$this->config = $this->base . 'config' . DIRECTORY_SEPARATOR;
 		$this->cache = $this->base . 'cache' . DIRECTORY_SEPARATOR;
 		$this->tmp = $this->base . 'tmp' . DIRECTORY_SEPARATOR;
+		$this->lang = $this->base . 'lang' . DIRECTORY_SEPARATOR;
 	}
 	
 	

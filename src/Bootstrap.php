@@ -16,6 +16,7 @@ use TinyMvc\Service\Url;
 use TinyMvc\Service\Controller;
 use TinyMvc\Service\Console;
 use TinyMvc\Service\Request;
+use TinyMvc\Service\CacheRunTime;
 
 class TinyMvcBootstrap {
 	
@@ -30,6 +31,7 @@ class TinyMvcBootstrap {
 	public function load_services() {
 		
 		$services_arr = self::SERVICE_CLASS;
+		$services_arr['cache_runtime'] = CacheRunTime::class;
 		
 		if(!CLI_CONSOLE) {
 			$services_arr['response'] = Response::class;
