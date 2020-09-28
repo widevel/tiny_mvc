@@ -18,7 +18,7 @@ class Template {
 			if($current_route === null) throw new \Exception('Current router is undefined.');
 			$view = $current_route->getView();
 			if($view === null) throw new \Exception('View not specified in render() and route view is undefined.');
-		} else if($view === null) $view = Page::$page_name . DIRECTORY_SEPARATOR . Page::$action_name . '.phtml';
+		} else if($view === null) $view = Controller::$page_name . DIRECTORY_SEPARATOR . Controller::$action_name . '.phtml';
 		$view_path = $this->getViewPath($view);
 		if($view_path === false) throw new \Exception(sprintf('View %s not exists', $view));
 		$html = self::renderHtml($view_path, $data);
