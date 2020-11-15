@@ -155,7 +155,7 @@ class Database {
 		$fields = implode('`,`', array_keys($data));
 		$values_part = implode(',', array_fill(0,count($data), '?'));
 		$sql = sprintf("INSERT%s INTO `%s` (`%s`) VALUES (%s)", ($ignore ? ' IGNORE' : ''), $table, $fields, $values_part);
-		log_d(self::LOG_TAG, 'INSERT SQL: %s', $sql);
+		log_d(self::LOG_TAG, "INSERT SQL: %s\nWith data: %s", $sql, json_encode(array_values($data)));
 		$stmt = $this->link->prepare($sql);
 		if($stmt === false) throw new \Exception($sql . ' - ' . $this->link->error);
 		$bind_mask = '';

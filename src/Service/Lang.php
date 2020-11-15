@@ -31,7 +31,7 @@ class Lang {
 				$fullpath = $locale_path . $file;
 				if(!is_file($fullpath) || (pathinfo($file, PATHINFO_EXTENSION) != 'yml' && pathinfo($file, PATHINFO_EXTENSION) != 'yaml')) continue;
 				$name = basename($file, '.' . pathinfo($file)['extension']);
-				
+
 				$data = yaml_parse_file($fullpath);
 				
 				if(!is_array($data)) throw new \Exception(sprintf('Unable to parse yaml file %s', $fullpath));
@@ -54,7 +54,7 @@ class Lang {
 		
 		log_w(self::LOG_TAG, 'Unable to find %s.%s lang var', $tag, $name);
 
-		return null;
+		return implode('.', func_get_args());
 	}
 	
 }
