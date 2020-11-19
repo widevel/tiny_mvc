@@ -72,7 +72,7 @@ class Log {
 			$message = call_user_func_array('sprintf', array_merge([$message], log_format_sprintf_args($sprintf_args)));
 		}
 		
-		$message .= "\nBacktrace: " . print_r(debug_backtrace(), true);
+		if($level === self::LEVEL_ERROR) $message .= "\nBacktrace: " . print_r(debug_backtrace(), true);
 		
 		$original_context = $context;
 		$context = $tag !== null && $context === null ? generate_random_hash() : $context;
