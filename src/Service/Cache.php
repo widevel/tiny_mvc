@@ -35,17 +35,24 @@ class Cache {
 	
 	public function get(string $name) {
 		$value = $this->adapterInstance->get($name);
-		if(is_string($value)) return unserialize(gzinflate($value));
+		
+		$unserialized = @unserialize($value);
+		if ($unserialized === FALSE) {
+			$this->del($name);
+			return null;
+		}
+		
+		if(is_string($value)) return $unserialized;
 		return null;
 	}
 	
 	public function set(string $name, $value) {
-		$value_parsed = gzdeflate(serialize($value), 9);
+		$value_parsed = serialize($value);
 		return $this->adapterInstance->set($name, $value_parsed);
 	}
 	
 	public function del(string $name) {
-		return $this->adapterInstance->get($name);
+		return $this->adapterInstance->del($name);
 	}
 	
 }

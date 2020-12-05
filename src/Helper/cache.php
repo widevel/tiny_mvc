@@ -9,7 +9,8 @@
 */
 
 function cache_parse_name(string $name) {
-	return hash('sha256', $name);
+	$split = explode(':', $name);
+	return $split[0] . DIRECTORY_SEPARATOR . hash('sha256', $name);
 }
 
 function cache_rt_create_key($data) {

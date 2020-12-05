@@ -28,6 +28,9 @@ class Fs {
 	}
 	
 	private function getFilePath(string $name) :string {
-		return $this->base_path . cache_parse_name($name);
+		$path = $this->base_path . cache_parse_name($name);
+		$dir_path = dirname($path);
+		if(!is_dir($dir_path)) mkdir($dir_path, 0777, true);
+		return $path;
 	}
 }
