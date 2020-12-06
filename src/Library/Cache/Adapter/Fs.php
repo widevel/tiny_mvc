@@ -23,7 +23,8 @@ class Fs {
 	}
 	
 	public function del(string $name) :bool {
-		if($this->exists($name)) return unlink($this->getFilePath($name));
+		$path = $this->getFilePath($name);
+		if($this->exists($name) && is_file($path)) return unlink($path);
 		return false;
 	}
 	
