@@ -44,15 +44,13 @@ function AppErrorHandler($type, $message, $file, $line) {
 	
 	$err_fatal = (bool) (($type === E_ERROR || $type === E_USER_ERROR) || THROW_ERR_ANY);
 	
-	$error_code = null;
 	if($err_fatal) {
 		if(IS_TEST) set_test_status(false);
 		http_response_code(500);
 		if(class_exists(\TinyMvc\Service\Response::class)) \TinyMvc\Service\Response::$HTTP_RESPONSE_CODE_SETTED = true;
 	}
 	if(function_exists('service_exists') && service_exists('log')) {
-		$error_code = \TinyMvc\Service\Log::$unique;
-		log_e('Bootstrap', $err_message);
+		log_e('Bootstrap error', null, [], $err_message);
 	} else if(IS_TEST) add_test_log_count(1);
 	if(CLI_CONSOLE && (int) DISPLAY_ERRORS === 0) echo $err_message . "\n";
 	

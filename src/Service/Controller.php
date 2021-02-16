@@ -11,7 +11,7 @@ namespace TinyMvc\Service;
 
 class Controller {
 	
-	const LOG_TAG = 'TinyMvc.Service_Controller';
+	const LOG_TAG = 'TinyMvc.Controller';
 	
 	public static $page_name, $action_name;
 	
@@ -32,7 +32,7 @@ class Controller {
 		} else {
 			$page = self::getPageNameFromSegment($page_segment);
 			$actionName = self::getActionNameFromSegment($action_segment);
-			log_d(self::LOG_TAG, 'Request: %s/%s', $page, $actionName);
+			log_d(sprintf('Request: %s/%s', $page, $actionName), self::LOG_TAG);
 			
 			$relativeClassName = $page;
 		}
@@ -40,7 +40,7 @@ class Controller {
 		$className = sprintf('\%s\Controller\\%s', BUNDLE_NAME, $relativeClassName);
 		
 		if(!class_exists($className)) {
-			log_d(self::LOG_TAG, '404: Class %s not exists', $className);
+			log_d(sprintf('404: Class %s not exists', $className), self::LOG_TAG);
 			$response_service->setCode(404);
 			return;
 		}
@@ -50,7 +50,7 @@ class Controller {
 		
 		
 		if(!method_exists($instance, $actionName)) {
-			log_d(self::LOG_TAG, '404: Method %s:%s not exists', $className, $actionName);
+			log_d(sprintf('404: Method %s:%s not exists', $className, $actionName), self::LOG_TAG);
 			$response_service->setCode(404);
 			return;
 		}
@@ -63,11 +63,11 @@ class Controller {
 			\TinyMvc\Service\Template::class
 		];
 		if($return !== null) {
-			log_d(self::LOG_TAG, 'Page return: %s', get_class($return));
+			log_d('Page return: ' . get_class($return), self::LOG_TAG);
 			if(!(is_object($return) && in_array(get_class($return), $return_classes))) throw new \Exception(sprintf('Page %s->%s() has be invalid return', $className, $actionName));
 		
 			$response_service->mergeData($return);
-		} else log_d(self::LOG_TAG, 'Page return: null');
+		} else log_d('Page return: null', self::LOG_TAG);
 		
 		if(IS_TEST) test_after();
 		

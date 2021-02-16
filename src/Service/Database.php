@@ -56,7 +56,7 @@ class Database {
 	
 	public function connect() {
 		if(is_object($this->link)) return;
-		log_d(self::LOG_TAG, 'Connecting to mysql: HOSTNAME %s USER %s DB %s PORT %d', $this->hostname, $this->user, $this->db, $this->port);
+		log_d(sprintf('Connecting to mysql: HOSTNAME %s USER %s DB %s PORT %d', $this->hostname, $this->user, $this->db, $this->port), self::LOG_TAG);
 		$link = new \mysqli($this->hostname, $this->user, $this->pass, $this->db, $this->port);
 		$link->set_charset("utf8mb4");
 		
@@ -69,9 +69,9 @@ class Database {
 	
 	public function selectRows(string $query, array $binds = []) {
 		$this->lastQuery = null;
-		log_d(self::LOG_TAG, 'Query: %s Binds: %s', $query, json_encode($binds));
+		log_d(sprintf('Query: %s Binds: %s', $query, json_encode($binds)), self::LOG_TAG);
 		$query = $this->bindsQuery($query, $binds);
-		log_d(self::LOG_TAG, 'Runnable Query: %s', $query);
+		log_d(sprintf('Runnable Query: %s', $query), self::LOG_TAG);
 		$this->lastQuery = $query;
 		$rows = [];
 		if ($result = $this->link->query($query)) {
@@ -86,20 +86,20 @@ class Database {
 		}
 
 		if($this->link->error) throw new \Exception($query . ' - ' . $this->link->error);
-		log_d(self::LOG_TAG, 'Rows results: %d', count($rows));
+		log_d('Rows results: ' . count($rows), self::LOG_TAG);
 		return $rows;
 	}
 	
 	public function selectOneRow(string $query, array $binds = []) {
 		$this->lastQuery = null;
-		log_d(self::LOG_TAG, 'Query: %s Binds: %s', $query, json_encode($binds));
+		log_d('Query: ' . $query, self::LOG_TAG, [], $binds);
 		$query = $this->bindsQuery($query, $binds);
-		log_d(self::LOG_TAG, 'Runnable Query: %s', $query);
+		log_d('Runnable Query:' . $query, self::LOG_TAG);
 		$this->lastQuery = $query;
 		if ($result = $this->link->query($query)) {
 			if($result->num_rows > 0) {
 				$obj = $result->fetch_object();
-				log_d(self::LOG_TAG, 'Response: %s', json_encode($obj));
+				log_d('Response', self::LOG_TAG, [], $obj);
 				$result->close();
 				return $obj;
 			}
@@ -107,15 +107,15 @@ class Database {
 		}
 
 		if($this->link->error) throw new \Exception($query . ' - ' . $this->link->error);
-		log_d(self::LOG_TAG, 'Response: null');
+		log_d('Response: null', self::LOG_TAG);
 		return null;
 	}
 	
 	public function simpleQuery(string $query, array $binds = []) {
 		$this->lastQuery = null;
-		log_d(self::LOG_TAG, 'Query: %s Binds: %s', $query, json_encode($binds));
+		log_d('Query: ' . $query, self::LOG_TAG, [], $binds);
 		$query = $this->bindsQuery($query, $binds);
-		log_d(self::LOG_TAG, 'Runnable Query: %s', $query);
+		log_d('Runnable Query: ' . $query, self::LOG_TAG);
 		$this->lastQuery = $query;
 		$this->link->query($query);
 		if($this->link->error) throw new \Exception($query . ' - ' . $this->link->error);
@@ -155,7 +155,7 @@ class Database {
 		$fields = implode('`,`', array_keys($data));
 		$values_part = implode(',', array_fill(0,count($data), '?'));
 		$sql = sprintf("INSERT%s INTO `%s` (`%s`) VALUES (%s)", ($ignore ? ' IGNORE' : ''), $table, $fields, $values_part);
-		log_d(self::LOG_TAG, "INSERT SQL: %s\nWith data: %s", $sql, json_encode(array_values($data)));
+		log_d("INSERT SQL: " . $sql, self::LOG_TAG, [], array_values($data));
 		$stmt = $this->link->prepare($sql);
 		if($stmt === false) throw new \Exception($sql . ' - ' . $this->link->error);
 		$bind_mask = '';

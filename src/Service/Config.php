@@ -14,8 +14,12 @@ class Config {
 	public $list = [];
 	
 	public function get($name, $required = true) {
-		
-		if(array_key_exists($name, $this->list)) return $this->list[$name];
+		$log_message = "Config get '${name}' required: " . ($required ? 'true' : 'false');
+
+		if(array_key_exists($name, $this->list)) {
+			log_i($log_message, "TinyMvc.Service.Config", [], $this->list[$name]);
+			return $this->list[$name];
+		}
 
 		$path = service('path')->config . $name . '.yaml';
 		if(!is_file($path)) {
@@ -29,7 +33,9 @@ class Config {
 			if($required) throw new \Exception(sprintf('Unable to parse yaml file %s', $path));
 			return null;
 		}
-		
+
+		log_i($log_message, "TinyMvc.Service.Config", [], $data);
+
 		$this->list[$name] = $data;
 		
 		return $data;

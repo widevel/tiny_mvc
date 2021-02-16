@@ -22,6 +22,8 @@ class Path {
 		$this->cache = $this->base . 'cache' . DIRECTORY_SEPARATOR;
 		$this->tmp = $this->base . 'tmp' . DIRECTORY_SEPARATOR;
 		$this->lang = $this->base . 'lang' . DIRECTORY_SEPARATOR;
+
+		log_i("Paths", "TinyMvc.Service.Path", [], get_object_vars($this));
 	}
 	
 	

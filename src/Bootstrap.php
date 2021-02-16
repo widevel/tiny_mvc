@@ -10,7 +10,7 @@
 use TinyMvc\Service\Response;
 use TinyMvc\Service\ResponseJson;
 use TinyMvc\Service\Path;
-use TinyMvc\Service\Log;
+use TinyMvc\Service\LogLocal;
 use TinyMvc\Service\Config;
 use TinyMvc\Service\Url;
 use TinyMvc\Service\Controller;
@@ -22,7 +22,7 @@ class TinyMvcBootstrap {
 	
 	const SERVICE_CLASS = [
 		'path' => Path::class,
-		'log' => Log::class,
+		'log' => LogLocal::class,
 		'config' => Config::class,
 	];
 	

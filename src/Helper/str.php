@@ -104,7 +104,7 @@ function stripos_arr($str, $arr) {
 }
 
 function _unserialize(string $serialized) {
-	log_d('TinyMvc.HelperStr', 'serialized str: %s', $serialized);
+	log_d("_unserialize: " . $serialized, "TinyMvc.Helper.Cmd");
 	$data = unserialize($serialized);
 	if ($serialized === 'b:0;' || $data !== false) return $data;
 	return UNSERIALIZE_ERR;

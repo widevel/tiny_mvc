@@ -10,9 +10,7 @@
 namespace TinyMvc\Service;
 
 class Lang {
-	
-	CONST LOG_TAG = 'TinyMvcServiceLang';
-	
+		
 	public $current_locale = 'es_ES';
 	private $list = [];
 	public function __construct() {
@@ -52,7 +50,7 @@ class Lang {
 			return $this->list[$tag][$name];
 		}
 		
-		log_w(self::LOG_TAG, 'Unable to find %s.%s lang var', $tag, $name);
+		log_w(sprintf('Unable to find %s.%s lang var', $tag, $name), 'TinyMvcServiceLang');
 
 		return implode('.', func_get_args());
 	}

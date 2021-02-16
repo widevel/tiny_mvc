@@ -42,14 +42,14 @@ class Response {
 	}
 	
 	public function sendHeaders() {
-		log_d(self::LOG_TAG, 'Sending headers: %s', $this->headers);
+		log_d('Sending headers', self::LOG_TAG, [], $this->headers);
 		foreach($this->headers as $name => $value) header(sprintf('%s: %s', $name, $value));
 	}
 	
 	public function redirect(string $uri = '') {
-		log_d(self::LOG_TAG, 'Redirect uri: %s', $uri);
+		log_d(sprintf('Redirect uri: %s', $uri), self::LOG_TAG);
 		$redirect_url = is_url($uri) ? $uri : service('url')->getUrl($uri);
-		log_d(self::LOG_TAG, 'Redirect url: %s', $redirect_url);
+		log_d(sprintf('Redirect url: %s', $redirect_url), self::LOG_TAG);
 		$this->setHeader('Location',  $redirect_url);
 		return $this;
 	}
@@ -57,7 +57,7 @@ class Response {
 	public function __destruct() {
 		if($this->body !== null) echo $this->body;
 		if(self::$HTTP_RESPONSE_CODE_SETTED) $this->code = self::$HTTP_RESPONSE_CODE_SETTED;
-		log_d(self::LOG_TAG, 'HTTP code: %d', $this->code);
+		log_d(sprintf('HTTP code: %d', $this->code), self::LOG_TAG);
 		if(!headers_sent()) {
 			http_response_code($this->code);
 			$this->sendHeaders();
@@ -70,14 +70,14 @@ class Response {
 	
 	public function mergeFromResponseJson(\TinyMvc\Service\ResponseJson $class) {
 		$this->response_json = $class;
-		log_d(self::LOG_TAG, 'Merging from ResponseJson');
+		log_d('Merging from ResponseJson', self::LOG_TAG);
 		$this->setHeader('Content-Type', 'application/json');
 		$this->body = json_encode($class->getAllData());
-		log_d(self::LOG_TAG, 'JSON: %s', $this->body);
+		log_d('JSON: ' . $this->body, self::LOG_TAG);
 	}
 	
 	public function mergeFromTemplate(\TinyMvc\Service\Template $class) {
-		log_d(self::LOG_TAG, 'Merging from Template');
+		log_d('Merging from Template', self::LOG_TAG);
 		$this->body = $class->html;
 	}
 	

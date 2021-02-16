@@ -16,6 +16,7 @@ function call_console_cmd(string $name, array $arguments = [], bool $background 
 		return;
 	}
 	$cmd = cmd_get_php_bin_path();
+	log_d("PHP Bin Path: " . $cmd, "TinyMvc.Helper.Cmd");
 	$cmd .= ' ' . service('path')->php . 'console.php ' . escapeshellarg($name);
 	if(count($arguments) > 0 && $serialize_arguments) {
 		$cmd .= ' ' . escapeshellarg('serialized');
@@ -27,7 +28,7 @@ function call_console_cmd(string $name, array $arguments = [], bool $background 
 	}
 	
 	if($background) $cmd .= cmd_get_background_str();
-	log_d('TinyMvc.HelperCmd', 'cmd:' . $cmd);
+	log_d("CMD: " . $cmd, "TinyMvc.Helper.Cmd");
 	return shell_exec($cmd);
 }
 

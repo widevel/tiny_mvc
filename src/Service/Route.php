@@ -65,7 +65,7 @@ class Route {
 		if($this->page_segment === null && $this->action_segment === null) {
 			$route = $this->getDefault();
 			if(!is_object($route)) {
-				log_w(self::LOG_TAG, 'Default route not exists');
+				log_e('Default route not exists', self::LOG_TAG);
 				service('response')->setCode(404);
 				die();
 			}
@@ -73,14 +73,14 @@ class Route {
 			$route_uri = $this->page_segment . '/' . $this->action_segment;
 			$route = $this->getByUri($route_uri);
 			if(!is_object($route)) {
-				log_d(self::LOG_TAG, 'Route for uri %s not exists', $route_uri);
+				log_d("Route for uri ${route_uri} not exists", self::LOG_TAG);
 				service('response')->setCode(404);
 				die();
 			}
 		}
 		
-		log_d(self::LOG_TAG, 'Current Route Name %s', $route->getName());
-		log_d(self::LOG_TAG, 'Current Route %s', $route);
+		log_d('Current Route Name ' . $route->getName(), self::LOG_TAG);
+		log_d('Current Route', self::LOG_TAG, [], $route);
 		
 		$this->setCurrent($route->getName());
 		

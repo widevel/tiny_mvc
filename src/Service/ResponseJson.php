@@ -21,7 +21,7 @@ class ResponseJson {
 	}
 	
 	public function getAllData(): array {
-		log_d(self::LOG_TAG, 'json %s', $this->data);
+		log_d('json', self::LOG_TAG, [], $this->data);
 		return $this->data;
 	}
 }
