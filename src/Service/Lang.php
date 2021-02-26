@@ -46,13 +46,17 @@ class Lang {
 	
 	public function get(string $tag, string $name) {
 		
-		if(array_key_exists($tag, $this->list) && array_key_exists($name, $this->list[$tag])) {
+		if($this->exists($tag,$name)) {
 			return $this->list[$tag][$name];
 		}
 		
 		log_w(sprintf('Unable to find %s.%s lang var', $tag, $name), 'TinyMvcServiceLang');
 
 		return implode('.', func_get_args());
+	}
+
+	public function exists(string $tag, string $name) :bool {
+		return array_key_exists($tag, $this->list) && array_key_exists($name, $this->list[$tag]);
 	}
 	
 }

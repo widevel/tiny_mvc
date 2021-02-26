@@ -9,6 +9,16 @@
 */
 
 function lang_get(string $name) {
+	list($tag, $name) = lang_get_params($name);
+	return service('lang')->get($tag, $name);
+}
+
+function lang_exists(string $name) :bool {
+	list($tag, $name) = lang_get_params($name);
+	return service('lang')->exists($tag, $name);
+}
+
+function lang_get_params(string $name) :array {
 	$tag = 'default';
 	$split = explode('.', $name);
 	if(count($split) > 1) {
@@ -16,6 +26,5 @@ function lang_get(string $name) {
 		$split = array_slice($split, 1);
 		$name = implode('.', $split);
 	}
-	
-	return service('lang')->get($tag, $name);
+	return [$tag, $name];
 }
