@@ -16,8 +16,8 @@ function generate_random_hash(string $algo = 'md5') :string {
 	return hash($algo, (microtime() . generate_random_str(512) . random_bytes(16)));
 }
 
-function generate_random_str(int $length) :string {
-	return substr(string_walk_recursive(RANDOM_STRING_CHARSET, 'str_shuffle', rand(5,15)),0, $length);
+function generate_random_str(int $length, string $charset = RANDOM_STRING_CHARSET) :string {
+	return substr(string_walk_recursive($charset, 'str_shuffle', rand(5,35)),0, $length);
 }
 
 function generate_random_number(int $length) :string {
