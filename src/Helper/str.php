@@ -109,3 +109,12 @@ function _unserialize(string $serialized) {
 	if ($serialized === 'b:0;' || $data !== false) return $data;
 	return UNSERIALIZE_ERR;
 }
+
+function sort_array_by_object_prop(array $array, string $prop, int $sort_order = SORT_ASC) {
+	$values = []; 
+	foreach ($array as $my_object) $values[] = $my_object->{$prop}; //any object field
+
+	array_multisort($values, $sort_order, $array);
+
+	return $array;
+}
