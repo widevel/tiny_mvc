@@ -55,7 +55,7 @@ function AppErrorHandler($type, $message, $file, $line) {
 	if(CLI_CONSOLE && (int) DISPLAY_ERRORS === 0) echo $err_message . "\n";
 	
 	if($err_fatal) {
-		if(!CLI_CONSOLE && DISPLAY_ERRORS === 0 && defined('FATAL_ERROR_HTML_PATH') && is_file(FATAL_ERROR_HTML_PATH) && is_readable(FATAL_ERROR_HTML_PATH)) show500ErrorTemplate(FATAL_ERROR_HTML_PATH, $error_code);
+		if(!CLI_CONSOLE && DISPLAY_ERRORS === 0 && defined('FATAL_ERROR_HTML_PATH') && is_file(FATAL_ERROR_HTML_PATH) && is_readable(FATAL_ERROR_HTML_PATH)) show500ErrorTemplate(FATAL_ERROR_HTML_PATH);
 		if(!IS_TEST) die();
 	}
 }
