@@ -12,13 +12,12 @@ namespace TinyMvc\Service;
 class Url {
 	public $base_url, $segments = [], $arguments = [], $base_path, $current_url, $referer;
 	public function __construct() {
-		$config_url = get_config('url');
-		$this->base_url = $config_url['base_url'];
+		$this->base_url = $_ENV['BASE_URL'];
 		
 		if(CLI_CONSOLE) {
-			if(!array_key_exists('base_path', $config_url)) throw new \Exception('base_path not defined en url.yaml');
-			if(!array_key_exists('base_url', $config_url)) throw new \Exception('base_url not defined en url.yaml');
-			$this->base_path = $config_url['base_path'];
+			if(!array_key_exists('URL_BASE_PATH', $_ENV)) throw new \Exception('URL_BASE_PATH not defined in .env');
+			if(!array_key_exists('BASE_URL', $_ENV)) throw new \Exception('BASE_URL not defined in .env');
+			$this->base_path = $_ENV['URL_BASE_PATH'];
 			
 		} else {
 			$this->base_path = $this->getBasePath();
@@ -27,7 +26,7 @@ class Url {
 			if(array_key_exists('HTTP_REFERER', $_SERVER)) $this->referer = $_SERVER['HTTP_REFERER'];
 			
 
-			$this->segments = array_key_exists('path', $_GET) ? array_values(explode('/', $_GET['path'])) : [];
+			$this->segments = array_key_exists('path', $_GET) ? array_values(explode('/', $_GET['path'])) : (array_key_exists('REQUEST_URI', $_SERVER) ? array_values(explode('/', ltrim($_SERVER['REQUEST_URI'], '/'))) : []);
 			$this->arguments = $this->segments;
 			if(count($this->arguments) > 0) {
 				if(count($this->arguments) == 1) unset($this->arguments[0]);

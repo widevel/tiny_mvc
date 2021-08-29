@@ -83,6 +83,8 @@ define('BUNDLE_NAME',  file_get_contents($bundlename_file));
 load_php_files('src');
 load_php_files(__DIR__ . '/../' . BUNDLE_NAME);
 
+Dotenv\Dotenv::createImmutable(realpath('../..'))->safeLoad();
+
 $bootstrap_class = new TinyMvcBootstrap;
 $bootstrap_class->load_services();
 

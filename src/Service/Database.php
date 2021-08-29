@@ -25,16 +25,12 @@ class Database {
 		if(!is_array($database_models_config)) throw new \Exception('unable to load database_models.yaml config');
 		
 		$this->models = $database_models_config;
-		
-		$database_config = get_config('database');
-		
-		if(!is_array($database_config)) throw new \Exception('unable to load database.yaml config');
-		
-		$this->hostname = array_key_exists('hostname', $database_config) ? $database_config['hostname'] : null;
-		$this->port = array_key_exists('port', $database_config) ? $database_config['port'] : self::DEFAULT_PORT;
-		$this->user = array_key_exists('user', $database_config) ? $database_config['user'] : null;
-		$this->pass = array_key_exists('pass', $database_config) ? $database_config['pass'] : null;
-		$this->db = array_key_exists('db', $database_config) ? $database_config['db'] : null;
+				
+		$this->hostname = array_key_exists('DATABASE_HOSTNAME', $_ENV) ? $_ENV['DATABASE_HOSTNAME'] : null;
+		$this->port = array_key_exists('DATABASE_PORT', $_ENV) ? $_ENV['DATABASE_PORT'] : self::DEFAULT_PORT;
+		$this->user = array_key_exists('DATABASE_USER', $_ENV) ? $_ENV['DATABASE_USER'] : null;
+		$this->pass = array_key_exists('DATABASE_PASSWORD', $_ENV) ? $_ENV['DATABASE_PASSWORD'] : null;
+		$this->db = array_key_exists('DATABASE_NAME', $_ENV) ? $_ENV['DATABASE_NAME'] : null;
 		
 		if(!$this->hostname) throw new \Exception('hostname var is missing in config file');
 		if(!$this->user) throw new \Exception('user var is missing in config file');
