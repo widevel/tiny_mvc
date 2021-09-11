@@ -11,7 +11,7 @@
 use Symfony\Component\Process\PhpExecutableFinder;
 
 function call_console_cmd(string $name, array $arguments = [], bool $background = true, bool $serialize_arguments = true) {
-	if(CLI_CONSOLE) {
+	if(CLI_CONSOLE || !$background) {
 		TinyMvc\Service\Console::callConsoleClass($name, $arguments);
 		return;
 	}
