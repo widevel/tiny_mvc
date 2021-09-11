@@ -24,9 +24,13 @@ class Url {
 			//$this->base_url = $this->getBaseUrl();
 			
 			if(array_key_exists('HTTP_REFERER', $_SERVER)) $this->referer = $_SERVER['HTTP_REFERER'];
-			
 
-			$this->segments = array_key_exists('path', $_GET) ? array_values(explode('/', $_GET['path'])) : (array_key_exists('PHP_LOCAL_SERVER', $_ENV) && intval($_ENV['PHP_LOCAL_SERVER']) == 1 && array_key_exists('REQUEST_URI', $_SERVER) ? array_values(explode('/', ltrim($_SERVER['REQUEST_URI'], '/'))) : []);
+			if(array_key_exists('PHP_LOCAL_SERVER', $_ENV) && intval($_ENV['PHP_LOCAL_SERVER']) == 1) {
+				$this->segments = array_key_exists('PATH_INFO', $_SERVER) ? array_values(explode('/', ltrim($_SERVER['PATH_INFO'], '/'))) : [];
+			} else {
+				$this->segments = array_key_exists('path', $_GET) ? array_values(explode('/', $_GET['path'])) : [];
+			}
+
 			$this->arguments = $this->segments;
 			if(count($this->arguments) > 0) {
 				if(count($this->arguments) == 1) unset($this->arguments[0]);
