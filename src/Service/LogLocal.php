@@ -43,12 +43,12 @@ class LogLocal {
 
 		$date = $date === null ? new \DateTime('now') : $date;
 
-		$line_str = sprintf("[%s] (%s) (%s) (%s): (%s) (%s)", $date->format('Y-m-d H:i:s'), $level_str, $name, implode(',', $tags), $message, print_r($data, true)) . "\n";
+		$line_str = sprintf("[%s] (%s) (%s) (%s): (%s) (%s)", $date->format('Y-m-d H:i:s'), $level_str, $name, implode(',', $tags), $message, self::visualData($data)) . "\n";
 
 		self::log_file_write($this->path . $level_str . '_' . date('Y-m-d_H') . '.log', $line_str);
 		
-		$smartlog_arguments = [$message, $name, $tags, $data];
-		call_user_func_array('\TinyMvc\Service\SmartLog::' . $level_str, $smartlog_arguments);
+		//$smartlog_arguments = [$message, $name, $tags, $data];
+		//call_user_func_array('\TinyMvc\Service\SmartLog::' . $level_str, $smartlog_arguments);
 	}
 
 	private static function log_file_write($path, $str) :bool {
@@ -62,5 +62,13 @@ class LogLocal {
 		fclose($fp);
 		
 		return true;
+	}
+
+	private static function visualData($data) {
+
+		if(is_bool($data)) return $data ? 'true' : 'false';
+		if(\is_resource($data)) return 'Resource';
+
+		return print_r($data, true);
 	}
 }
